@@ -249,7 +249,23 @@ def process_paginated_results(session: requests.Session, initial_response: reque
         print("Coleta finalizada - todas as páginas válidas foram processadas")
     
     print(f"RESULTADO FINAL: {len(all_deputies)} deputadas coletadas de {current_page} páginas processadas")
-    return all_deputies
+    
+    # Extrair informações detalhadas de cada deputada
+    print("\nColetando informações detalhadas dos perfis individuais...")
+    detailed_deputies = []
+    
+    for i, deputy in enumerate(all_deputies):
+        print(f"Processando perfil {i+1}/{len(all_deputies)}: {deputy['nome']}")
+        detailed_deputy = extract_detailed_deputy_info(session, deputy.copy(), headers)
+        detailed_deputies.append(detailed_deputy)
+        
+        # Delay maior a cada 10 perfis para evitar sobrecarga
+        if (i + 1) % 10 == 0:
+            print(f"  Processados {i+1} perfis, aguardando 5 segundos...")
+            time.sleep(5)
+    
+    print(f"\nColeta detalhada concluída! {len(detailed_deputies)} perfis processados")
+    return detailed_deputies
 
 
 def parse_deputies_results(html_content: bytes, source_url: str) -> List[Dict]:
@@ -400,7 +416,7 @@ def extract_deputy_from_element(element, source_url: str) -> Optional[Dict]:
                 else:
                     profile_link = f"https://www.camara.leg.br{href}"
         
-        # Montar dados da deputada
+        # Montar dados básicos da deputada
         deputy_data = {
             "nome": name,
             "partido": clean_text(party) if party else "",
@@ -418,6 +434,109 @@ def extract_deputy_from_element(element, source_url: str) -> Optional[Dict]:
         
     except Exception as e:
         return None
+
+
+def extract_detailed_deputy_info(session: requests.Session, deputy_data: Dict, headers: Dict) -> Dict:
+    """
+    Extrai informações detalhadas do perfil individual da deputada.
+    
+    Args:
+        session: Sessão do requests
+        deputy_data: Dados básicos da deputada
+        headers: Cabeçalhos HTTP
+        
+    Returns:
+        dict: Dados da deputada com informações detalhadas
+    """
+    profile_url = deputy_data.get('link_perfil', '')
+    if not profile_url:
+        return deputy_data
+    
+    try:
+        print(f"Acessando perfil detalhado: {deputy_data['nome']}")
+        
+        # Fazer requisição para o perfil individual
+        profile_response = session.get(profile_url, headers=headers, timeout=15)
+        
+        if profile_response.status_code == 200:
+            # Usar a nova função de extração detalhada
+            detailed_data = extract_detailed_profile_data(profile_response.content, profile_url)
+            
+            # Mesclar dados detalhados com dados básicos
+            deputy_data.update(detailed_data)
+            print(f"  ✓ Dados detalhados coletados para {deputy_data['nome']}")
+            
+        else:
+            print(f"  ✗ Erro ao acessar perfil (HTTP {profile_response.status_code})")
+            deputy_data["perfil_detalhado"] = "Erro no acesso"
+            
+        # Delay para evitar sobrecarga
+        time.sleep(1)
+        
+    except Exception as e:
+        print(f"  ✗ Erro ao extrair dados detalhados: {e}")
+        deputy_data["perfil_detalhado"] = "Erro na extração"
+    
+    return deputy_data
+
+
+def extract_profile_field(soup, selectors: List[str]) -> str:
+    """Extrai campo do perfil usando múltiplos seletores."""
+    for selector in selectors:
+        try:
+            if ':contains(' in selector:
+                # Para seletores com :contains, usar busca por texto
+                if 'Nome Civil:' in selector:
+                    elem = soup.find(text=lambda x: x and 'Nome Civil:' in x)
+                    if elem:
+                        parent = elem.parent
+                        next_elem = parent.find_next_sibling()
+                        if next_elem:
+                            return next_elem.get_text().strip()
+                elif 'Partido:' in selector:
+                    elem = soup.find(text=lambda x: x and 'Partido:' in x)
+                    if elem:
+                        parent = elem.parent
+                        next_elem = parent.find_next_sibling()
+                        if next_elem:
+                            return next_elem.get_text().strip()
+                elif 'Naturalidade:' in selector:
+                    elem = soup.find(text=lambda x: x and 'Naturalidade:' in x)
+                    if elem:
+                        parent = elem.parent
+                        next_elem = parent.find_next_sibling()
+                        if next_elem:
+                            return next_elem.get_text().strip()
+                elif 'TITULAR' in selector:
+                    elem = soup.find(text=lambda x: x and 'TITULAR' in x)
+                    if elem:
+                        return elem.strip()
+            else:
+                elem = soup.select_one(selector)
+                if elem:
+                    text = elem.get_text().strip()
+                    if text and len(text) > 1:
+                        return text
+        except:
+            continue
+    return ""
+
+
+def extract_numeric_field(soup, selectors: List[str]) -> Optional[int]:
+    """Extrai campo numérico do perfil."""
+    for selector in selectors:
+        try:
+            elem = soup.select_one(selector)
+            if elem:
+                text = elem.get_text().strip()
+                # Tentar extrair número do texto
+                import re
+                numbers = re.findall(r'\d+', text)
+                if numbers:
+                    return int(numbers[0])
+        except:
+            continue
+    return None
 
 
 def extract_text_by_selectors(element, selectors: List[str]) -> str:
@@ -583,6 +702,156 @@ def is_likely_woman_deputy(deputy_data: Dict) -> bool:
     return False
 
 
+def process_detailed_profiles(deputies_data: List[Dict]) -> List[Dict]:
+    """
+    Processa perfis detalhados de cada deputada coletando informações adicionais.
+    
+    Args:
+        deputies_data: Lista com dados básicos das deputadas
+        
+    Returns:
+        List[Dict]: Lista com dados detalhados das deputadas
+    """
+    print(f"Processando {len(deputies_data)} perfis detalhados...")
+    
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive'
+    }
+    
+    session = requests.Session()
+    detailed_data = []
+    
+    for i, deputy in enumerate(deputies_data):
+        profile_url = deputy.get('link_perfil', '')
+        
+        if not profile_url:
+            print(f"Deputada {i+1}/{len(deputies_data)}: {deputy.get('nome', 'N/A')} - sem link do perfil")
+            detailed_data.append(deputy)
+            continue
+        
+        try:
+            print(f"Deputada {i+1}/{len(deputies_data)}: {deputy.get('nome', 'N/A')}")
+            
+            # Fazer requisição para o perfil
+            response = session.get(profile_url, headers=headers, timeout=15)
+            
+            if response.status_code == 200:
+                # Extrair dados detalhados
+                detailed_info = extract_detailed_profile_data(response.content, profile_url)
+                
+                # Combinar dados básicos com detalhados
+                combined_data = {**deputy, **detailed_info}
+                detailed_data.append(combined_data)
+                
+            else:
+                print(f"  Erro HTTP {response.status_code}")
+                detailed_data.append(deputy)
+                
+            # Delay entre requisições
+            time.sleep(1)
+            
+        except Exception as e:
+            print(f"  Erro: {e}")
+            detailed_data.append(deputy)
+    
+    print(f"Coleta detalhada concluída! {len(detailed_data)} perfis processados")
+    return detailed_data
+
+
+def extract_detailed_profile_data(html_content: bytes, profile_url: str) -> Dict:
+    """
+    Extrai dados detalhados do perfil de uma deputada.
+    
+    Args:
+        html_content: Conteúdo HTML da página do perfil
+        profile_url: URL do perfil
+        
+    Returns:
+        Dict: Dados detalhados extraídos
+    """
+    soup = BeautifulSoup(html_content, 'html.parser')
+    
+    detailed_data = {
+        'nome_civil': '',
+        'partido_detalhado': '',
+        'naturalidade': '',
+        'titulo_cargo': '',
+        'propostas_autoria': '',
+        'propostas_relatadas': '',
+        'votacoes_plenario': '',
+        'url_perfil_detalhado': profile_url,
+        'perfil_detalhado': 'Coletado'
+    }
+    
+    try:
+        # Extrair nome civil
+        nome_elements = soup.find_all(['h1', 'h2'])
+        for elem in nome_elements:
+            text = elem.get_text().strip()
+            if text and len(text) > 3:
+                detailed_data['nome_civil'] = text
+                break
+        
+        # Extrair partido detalhado
+        try:
+            party_elements = soup.find_all(text=True)
+            for elem in party_elements:
+                if elem and isinstance(elem, str):
+                    text = elem.strip()
+                    if 'partido' in text.lower() or (' - ' in text and len(text) < 20):
+                        detailed_data['partido_detalhado'] = text
+                        break
+        except Exception:
+            pass
+        
+        # Extrair naturalidade
+        try:
+            nat_elements = soup.find_all(text=True)
+            for elem in nat_elements:
+                if elem and isinstance(elem, str):
+                    text = elem.strip()
+                    if 'natural' in text.lower() and len(text) > 5 and len(text) < 50:
+                        detailed_data['naturalidade'] = text
+                        break
+        except Exception:
+            pass
+        
+        # Extrair título do cargo
+        titulo_elements = soup.find_all(['h2', 'h3', 'p', 'div', 'span'])
+        for elem in titulo_elements:
+            text = elem.get_text().strip()
+            if any(keyword in text.upper() for keyword in ['TITULAR', 'EXERCÍCIO', 'DEPUTAD']):
+                detailed_data['titulo_cargo'] = text
+                break
+        
+        # Buscar por números nas páginas (propostas, votações, etc.)
+        all_numbers = []
+        for elem in soup.find_all(['span', 'div', 'strong', 'b']):
+            text = elem.get_text().strip()
+            if text.isdigit() and len(text) <= 4 and int(text) > 0:
+                all_numbers.append(text)
+        
+        # Se encontrou números, usar os primeiros como dados padrão
+        if all_numbers:
+            if len(all_numbers) > 0:
+                detailed_data['propostas_autoria'] = all_numbers[0]
+            if len(all_numbers) > 1:
+                detailed_data['votacoes_plenario'] = all_numbers[1]
+            if len(all_numbers) > 2:
+                detailed_data['propostas_relatadas'] = all_numbers[2]
+    
+    except Exception as e:
+        print(f"    Erro na extração detalhada: {e}")
+    
+    return detailed_data
+    
+    return detailed_data
+
+
 def try_alternative_scraping(session: requests.Session, headers: Dict) -> List[Dict]:
     """
     Tenta métodos alternativos para fazer scraping dos dados de deputadas.
@@ -621,7 +890,7 @@ def try_alternative_scraping(session: requests.Session, headers: Dict) -> List[D
     return []
 
 
-def save_to_csv(deputies_data: List[Dict], filename: str = "../data/deputadas.csv") -> None:
+def save_to_csv(deputies_data: List[Dict], filename: str = "/Users/vanessacunha/T-INE5454/mulheres_politica/data/deputadas.csv") -> None:
     """
     Salva os dados das deputadas em arquivo CSV.
     
@@ -636,9 +905,11 @@ def save_to_csv(deputies_data: List[Dict], filename: str = "../data/deputadas.cs
     try:
         # Definir as colunas que serão incluídas no CSV
         fieldnames = [
-            'nome', 'partido', 'uf', 'legislatura', 'situacao',
-            'link_perfil', 'fonte_dados', 'url_fonte', 
-            'data_extracao', 'metodo_extracao'
+            'nome', 'nome_civil', 'partido', 'partido_detalhado', 'uf', 
+            'naturalidade', 'titulo_cargo', 'legislatura', 'situacao',
+            'propostas_autoria', 'propostas_relatadas', 'votacoes_plenario',
+            'link_perfil', 'url_perfil_detalhado', 'perfil_detalhado',
+            'fonte_dados', 'url_fonte', 'data_extracao', 'metodo_extracao'
         ]
         
         # Criar o arquivo CSV com encoding UTF-8
@@ -693,8 +964,15 @@ def main():
     deputies_data = scrape_camara_deputies_list()
     
     if deputies_data:
-        print(f"\nSCRAPING CONCLUÍDO COM SUCESSO!")
+        print(f"\nSCRAPING BÁSICO CONCLUÍDO!")
         print(f"Total de deputadas coletadas: {len(deputies_data)}")
+        
+        # Processar perfis detalhados
+        print(f"\nIniciando coleta detalhada dos perfis...")
+        deputies_data = process_detailed_profiles(deputies_data)
+        
+        print(f"\nSCRAPING DETALHADO CONCLUÍDO COM SUCESSO!")
+        print(f"Total de deputadas com dados detalhados: {len(deputies_data)}")
         
         # Gerar estatísticas dos dados coletados
         stats = generate_statistics(deputies_data)

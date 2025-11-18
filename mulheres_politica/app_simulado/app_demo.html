@@ -79,6 +79,11 @@
             font-weight: bold;
         }
         
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+        }
+        
         .data-section {
             margin-top: 30px;
         }
@@ -94,6 +99,16 @@
             border-collapse: collapse;
             margin-top: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-size: 0.9em;
+            overflow-x: auto;
+            display: block;
+            white-space: nowrap;
+        }
+        
+        table thead, table tbody {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
         }
         
         table thead {
@@ -105,10 +120,84 @@
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        table th:nth-child(1), table td:nth-child(1) {
+            width: 30%; /* Nome Civil */
+        }
+        
+        table th:nth-child(2), table td:nth-child(2) {
+            width: 20%; /* Partido */
+        }
+        
+        table th:nth-child(3), table td:nth-child(3) {
+            width: 15%; /* Cargo */
+        }
+        
+        table th:nth-child(4), table td:nth-child(4) {
+            width: 25%; /* Naturalidade */
+        }
+        
+        table th:nth-child(5), table td:nth-child(5) {
+            width: 10%; /* Propostas Relatadas */
+        }
+        
+        table tbody tr {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         
         table tbody tr:hover {
-            background-color: #f5f5f5;
+            background-color: #e3f2fd;
+            transform: scale(1.01);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table th {
+            min-height: 60px;
+            vertical-align: middle;
+            line-height: 1.2;
+            padding: 15px 8px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        
+        .pagination button {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination span {
+            margin: 0 15px;
+            font-weight: bold;
+            color: #333;
         }
         
         .filter-section {
@@ -148,6 +237,89 @@
             padding: 20px;
             text-align: center;
         }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            opacity: 0.7;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .detail-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .detail-item h4 {
+            margin: 0 0 8px 0;
+            color: #667eea;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .detail-item p {
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -160,16 +332,20 @@
         <div class="content">
             <div class="stats">
                 <div class="stat-card">
-                    <h3>Total de Deputadas</h3>
-                    <div class="number" id="total-deputadas">0</div>
+                    <h3>Total de Mulheres</h3>
+                    <span class="stat-number" id="total-deputadas">0</span>
                 </div>
                 <div class="stat-card">
-                    <h3>Total de Senadoras</h3>
-                    <div class="number" id="total-senadoras">0</div>
+                    <h3>Total de Propostas</h3>
+                    <div class="number" id="total-propostas">0</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Total Geral</h3>
-                    <div class="number" id="total-geral">0</div>
+                    <h3>Média de Votações</h3>
+                    <div class="number" id="media-votacoes">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Partidos Diferentes</h3>
+                    <div class="number" id="total-partidos">0</div>
                 </div>
             </div>
             
@@ -180,37 +356,59 @@
                     <select id="filter-party">
                         <option value="">Todos os Partidos</option>
                     </select>
-                    <select id="filter-state">
-                        <option value="">Todos os Estados</option>
-                    </select>
-                    <select id="filter-position">
-                        <option value="">Todos os Cargos</option>
-                        <option value="Deputada">Deputada</option>
-                        <option value="Senadora">Senadora</option>
-                    </select>
-                    <button onclick="filterData()">Filtrar</button>
-                    <button onclick="clearFilters()">Limpar</button>
+                                    <select id="naturalidade-filter">
+                    <option value="">Todas as Naturalidades</option>
+                </select>
+                <select id="cargo-filter">
+                    <option value="">Todos os Cargos</option>
+                </select>
+                <input type="number" id="propostas-filter" placeholder="Min. Propostas">
+                <button onclick="filterData()">Filtrar</button>
+                <button onclick="clearFilters()">Limpar</button>
                 </div>
                 
-                <h2>Lista de Representantes</h2>
-                <table id="data-table">
+                <h2>Lista de Mulheres na Política</h2>
+                <div class="table-container">
+                    <table id="data-table">
                     <thead>
                         <tr>
-                            <th>Nome</th>
+                            <th>Nome Civil</th>
                             <th>Partido</th>
-                            <th>Estado</th>
                             <th>Cargo</th>
-                            <th>Legislatura</th>
+                            <th>Naturalidade</th>
+                            <th>Propostas Relatadas</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
                         <tr>
                             <td colspan="5" style="text-align: center; padding: 30px;">
-                                Nenhum dado disponível. Execute os scripts de scraping para popular os dados.
+                                Carregando dados...
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                    </table>
+                </div>
+                
+                <div class="pagination">
+                    <button id="prev-page" onclick="changePage(-1)">&lt; Anterior</button>
+                    <span id="page-info">Página 1 de 1</span>
+                    <button id="next-page" onclick="changePage(1)">Próxima &gt;</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal de Detalhes -->
+        <div id="deputada-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title">Detalhes da Deputada</h2>
+                    <span class="close" onclick="closeModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-grid" id="modal-details">
+                        <!-- Detalhes serão inseridos aqui via JavaScript -->
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -220,23 +418,71 @@
     </div>
     
     <script>
-        // Sample data structure (will be replaced with actual scraped data)
-        let politicalData = [];
+        let deputadasData = [];
+        let originalData = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
         
-        function loadData() {
-            // This function would load data from JSON file
-            // For demo purposes, showing empty state
-            updateStats();
-            renderTable(politicalData);
+        async function loadData() {
+            try {
+                console.log('Carregando dados do JSON...');
+                const response = await fetch('data/deputadas_filtrado.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const jsonData = await response.json();
+                console.log('Estrutura do JSON:', jsonData);
+                
+                // Acessar o array de deputadas dentro do objeto JSON
+                deputadasData = jsonData.deputadas || [];
+                originalData = [...deputadasData]; // Cópia para filtros
+                
+                console.log(`Carregados ${deputadasData.length} registros`);
+                
+                updateStats();
+                renderTable(deputadasData);
+                populateFilters();
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 30px;">
+                            Erro ao carregar dados: ${error.message}<br>
+                            Certifique-se de que o arquivo deputadas_filtrado.json existe em data/
+                        </td>
+                    </tr>
+                `;
+            }
         }
         
         function updateStats() {
-            const deputadas = politicalData.filter(p => p.cargo === 'Deputada').length;
-            const senadoras = politicalData.filter(p => p.cargo === 'Senadora').length;
+            const totalDeputadas = deputadasData.length;
             
-            document.getElementById('total-deputadas').textContent = deputadas;
-            document.getElementById('total-senadoras').textContent = senadoras;
-            document.getElementById('total-geral').textContent = politicalData.length;
+            // Calcular total de propostas
+            const totalPropostas = deputadasData.reduce((sum, dep) => {
+                const propostas = parseInt(dep.propostas_autoria) || 0;
+                return sum + propostas;
+            }, 0);
+            
+            // Calcular média de votações
+            const totalVotacoes = deputadasData.reduce((sum, dep) => {
+                const votacoes = parseInt(dep.votacoes_plenario) || 0;
+                return sum + votacoes;
+            }, 0);
+            const mediaVotacoes = totalDeputadas > 0 ? Math.round(totalVotacoes / totalDeputadas) : 0;
+            
+            // Contar partidos únicos
+            const partidos = new Set(deputadasData.map(dep => dep.partido).filter(p => p && p !== 'null'));
+            const totalPartidos = partidos.size;
+            
+            document.getElementById('total-deputadas').textContent = totalDeputadas;
+            document.getElementById('total-propostas').textContent = totalPropostas.toLocaleString('pt-BR');
+            document.getElementById('media-votacoes').textContent = mediaVotacoes;
+            document.getElementById('total-partidos').textContent = totalPartidos;
         }
         
         function renderTable(data) {
@@ -246,46 +492,194 @@
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 30px;">
-                            Nenhum dado disponível. Execute os scripts de scraping para popular os dados.
+                            Nenhum resultado encontrado com os filtros aplicados.
                         </td>
                     </tr>
                 `;
+                updatePagination(0);
                 return;
             }
             
-            tbody.innerHTML = data.map(person => `
-                <tr>
-                    <td>${person.nome}</td>
-                    <td>${person.partido}</td>
-                    <td>${person.estado}</td>
-                    <td>${person.cargo}</td>
-                    <td>${person.legislatura}</td>
+            // Calcular paginação
+            const totalPages = Math.ceil(data.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = data.slice(startIndex, endIndex);
+            
+            tbody.innerHTML = pageData.map((deputada, index) => `
+                <tr onclick="openModal(${startIndex + index})" style="cursor: pointer;">
+                    <td>${deputada.nome_civil || 'N/A'}</td>
+                    <td>${deputada.partido || 'N/A'}</td>
+                    <td>${deputada.cargo || 'N/A'}</td>
+                    <td>${deputada.naturalidade || 'N/A'}</td>
+                    <td>${deputada.propostas_relatadas || '0'}</td>
                 </tr>
             `).join('');
+            
+            updatePagination(totalPages);
+        }
+        
+        function populateFilters() {
+            // Popular select de partidos
+            const partidos = [...new Set(originalData.map(dep => dep.partido).filter(p => p && p !== 'null'))].sort();
+            const partySelect = document.getElementById('filter-party');
+            partySelect.innerHTML = '<option value="">Todos os Partidos</option>';
+            partidos.forEach(partido => {
+                partySelect.innerHTML += `<option value="${partido}">${partido}</option>`;
+            });
+            
+            // Popular select de naturalidades
+            const naturalidades = [...new Set(originalData.map(dep => dep.naturalidade).filter(n => n && n !== 'null'))].sort();
+            const natSelect = document.getElementById('naturalidade-filter');
+            natSelect.innerHTML = '<option value="">Todas as Naturalidades</option>';
+            naturalidades.forEach(nat => {
+                natSelect.innerHTML += `<option value="${nat}">${nat}</option>`;
+            });
+            
+            // Popular select de cargos
+            const cargos = [...new Set(originalData.map(dep => dep.cargo).filter(c => c && c !== 'null'))].sort();
+            const cargoSelect = document.getElementById('cargo-filter');
+            cargoSelect.innerHTML = '<option value="">Todos os Cargos</option>';
+            cargos.forEach(cargo => {
+                cargoSelect.innerHTML += `<option value="${cargo}">${cargo}</option>`;
+            });
         }
         
         function filterData() {
             const name = document.getElementById('filter-name').value.toLowerCase();
             const party = document.getElementById('filter-party').value;
-            const state = document.getElementById('filter-state').value;
-            const position = document.getElementById('filter-position').value;
+            const naturalidade = document.getElementById('naturalidade-filter').value;
+            const cargo = document.getElementById('cargo-filter').value;
+            const minPropostas = parseInt(document.getElementById('propostas-filter').value) || 0;
             
-            const filtered = politicalData.filter(person => {
-                return (!name || person.nome.toLowerCase().includes(name)) &&
-                       (!party || person.partido === party) &&
-                       (!state || person.estado === state) &&
-                       (!position || person.cargo === position);
+            currentPage = 1; // Reset para primeira página ao filtrar
+            
+            const filtered = originalData.filter(deputada => {
+                const nomeMatch = !name || (deputada.nome_civil && deputada.nome_civil.toLowerCase().includes(name));
+                const partyMatch = !party || deputada.partido === party;
+                const natMatch = !naturalidade || deputada.naturalidade === naturalidade;
+                const cargoMatch = !cargo || deputada.cargo === cargo;
+                const propostasMatch = (parseInt(deputada.propostas_autoria) || 0) >= minPropostas;
+                
+                return nomeMatch && partyMatch && natMatch && cargoMatch && propostasMatch;
             });
             
-            renderTable(filtered);
+            deputadasData = filtered;
+            updateStats();
+            renderTable(deputadasData);
         }
         
         function clearFilters() {
             document.getElementById('filter-name').value = '';
             document.getElementById('filter-party').value = '';
-            document.getElementById('filter-state').value = '';
-            document.getElementById('filter-position').value = '';
-            renderTable(politicalData);
+            document.getElementById('naturalidade-filter').value = '';
+            document.getElementById('cargo-filter').value = '';
+            document.getElementById('propostas-filter').value = '';
+            
+            deputadasData = [...originalData];
+            currentPage = 1;
+            updateStats();
+            renderTable(deputadasData);
+        }
+        
+        function updatePagination(totalPages) {
+            const pageInfo = document.getElementById('page-info');
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+            
+            pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+            
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+        }
+        
+        function changePage(direction) {
+            const totalPages = Math.ceil(deputadasData.length / itemsPerPage);
+            
+            if (direction === -1 && currentPage > 1) {
+                currentPage--;
+            } else if (direction === 1 && currentPage < totalPages) {
+                currentPage++;
+            }
+            
+            renderTable(deputadasData);
+        }
+        
+        function openModal(index) {
+            const deputada = deputadasData[index];
+            if (!deputada) return;
+            
+            document.getElementById('modal-title').textContent = deputada.nome_civil || 'Deputada';
+            
+            const modalDetails = document.getElementById('modal-details');
+            modalDetails.innerHTML = `
+                <div class="detail-item">
+                    <h4>Nome Civil</h4>
+                    <p>${deputada.nome_civil || 'N/A'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Partido</h4>
+                    <p>${deputada.partido || 'N/A'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Cargo</h4>
+                    <p>${deputada.cargo || 'N/A'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Naturalidade</h4>
+                    <p>${deputada.naturalidade || 'N/A'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Data de Nascimento</h4>
+                    <p>${deputada.data_nascimento || 'N/A'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Propostas de Autoria</h4>
+                    <p>${deputada.propostas_autoria || '0'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Propostas Relatadas</h4>
+                    <p>${deputada.propostas_relatadas || '0'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Votações no Plenário</h4>
+                    <p>${deputada.votacoes_plenario || '0'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Discursos no Plenário</h4>
+                    <p>${deputada.discursos_plenario || '0'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Salário Mensal Bruto</h4>
+                    <p>${deputada.salario_mensal_bruto ? 'R$ ' + parseFloat(deputada.salario_mensal_bruto).toLocaleString('pt-BR', {minimumFractionDigits: 2}) : 'N/A'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Imóvel Funcional</h4>
+                    <p>${deputada.imovel_funcional || 'N/A'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Auxílio Moradia</h4>
+                    <p>${deputada.auxilio_moradia || 'N/A'}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>Viagens em Missão Oficial</h4>
+                    <p>${deputada.viagens_missao_oficial || '0'}</p>
+                </div>
+            `;
+            
+            document.getElementById('deputada-modal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('deputada-modal').style.display = 'none';
+        }
+        
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('deputada-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
         }
         
         // Load data on page load
