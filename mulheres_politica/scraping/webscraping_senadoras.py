@@ -5,6 +5,7 @@ Este módulo coleta informações sobre mulheres senadoras
 do site do Senado Federal brasileiro.
 """
 
+import json
 import requests
 from bs4 import BeautifulSoup
 import csv
@@ -36,7 +37,7 @@ def scrape_senadoras_list() -> List[Dict]:
         print("=" * 70)
         print("INICIANDO WEB SCRAPING - SENADORAS FEDERAIS")
         print("=" * 70)
-        print(f"\n1. Acessando página com filtro por sexo...")
+        print(f"\n1. Acessando página com filtro de GÊNERO FEMININO...")
         print(f"   URL: {base_url}")
         
         response = requests.get(base_url, headers=headers, timeout=15)
@@ -44,19 +45,18 @@ def scrape_senadoras_list() -> List[Dict]:
         print(f"   Status da resposta: {response.status_code}")
         
         if response.status_code == 200:
-            print("   Página acessada com sucesso!\n")
+            print("   ✓ Página acessada com sucesso!\n")
             
             soup = BeautifulSoup(response.content, 'html.parser')
             
             senadoras_data = extract_senadoras_from_filtered_table(soup, base_url, headers)
-            
         else:
-            print(f"   Erro ao acessar página: HTTP {response.status_code}\n")
+            print(f"  ✗ Erro ao acessar página: HTTP {response.status_code}\n")
             
     except requests.exceptions.RequestException as e:
-        print(f"   Erro de conexão: {e}\n")
+        print(f"  ✗ Erro de conexão: {e}\n")
     except Exception as e:
-        print(f"   Erro geral: {e}\n")
+        print(f"  ✗ Erro geral: {e}\n")
     
     return senadoras_data
 
@@ -64,20 +64,23 @@ def scrape_senadoras_list() -> List[Dict]:
 def extract_senadoras_from_filtered_table(soup: BeautifulSoup, source_url: str, headers: Dict) -> List[Dict]:
     
     senadoras = []
+
+    total_homens = 0
     
     print("2. Localizando tabela e seção 'Feminino'...")
     
     table = soup.find('table')
     
     if not table:
-        print("   Tabela não encontrada no HTML\n")
+        print("  ✗ Tabela não encontrada no HTML\n")
         return senadoras
     
-    print("   Tabela encontrada!")
+    print("  ✓  Tabela encontrada!")
     
     rows = table.find_all('tr')
     
     inside_feminino_section = False
+    inside_masculino_section = False
     total_senadoras = 0
     
     print("   Procurando seção 'Feminino'...\n")
@@ -87,61 +90,76 @@ def extract_senadoras_from_filtered_table(soup: BeautifulSoup, source_url: str, 
         
         if 'Feminino' in row_text and row_text == 'Feminino':
             inside_feminino_section = True
-            print("3.  Seção 'Feminino' encontrada! Extraindo senadoras...\n")
+            print("3.   ✓ Seção 'Feminino' encontrada! Extraindo senadoras...\n")
             continue
         
         if 'Masculino' in row_text and row_text == 'Masculino':
             inside_feminino_section = False
-            print(f"\n4.  Seção 'Masculino' encontrada - parando extração")
-            print(f"   Total de senadoras coletadas: {total_senadoras}\n")
-            break
+            inside_masculino_section = True
+            print(f"\n4.  Seção 'Masculino' encontrada - parando extração ✗")
+            print(f"\n   Seção 'Masculino' encontrada. Contando senadores homens...")
+            print(f"    ✓ Total de senadoras coletadas: {total_senadoras}\n")
+            continue
         
-        if inside_feminino_section:
-            cells = row.find_all('td')
-            
-            if len(cells) >= 6:
-                try:
-                    nome_cell = cells[0]
-                    nome_link = nome_cell.find('a')
-                    
-                    if nome_link:
-                        nome = nome_link.get_text().strip()
-                        perfil_url = nome_link.get('href', '')
-                        
-                        if perfil_url and not perfil_url.startswith('http'):
-                            perfil_url = f"https://www25.senado.leg.br{perfil_url}"
-                    else:
-                        continue
-                    
-                    partido = cells[1].get_text().strip()
-                    uf = cells[2].get_text().strip()
-                    periodo = cells[3].get_text().strip()
-                    telefones = cells[4].get_text().strip()
-                    email = cells[5].get_text().strip()
-                    
-                    print(f"   ✓ Senadora encontrada: {nome} ({partido}-{uf})")
-                    
-                    senadora_data = {
-                        'nome': nome,
-                        'partido': partido,
-                        'uf': uf,
-                        'periodo_mandato': periodo,
-                        'telefones': telefones,
-                        'email': email,
-                        'link_perfil': perfil_url,
-                        'fonte_dados': 'Web Scraping HTML',
-                        'url_fonte': source_url,
-                        'data_extracao': time.strftime("%Y-%m-%d %H:%M:%S"),
-                        'metodo_extracao': 'BeautifulSoup - Senado Federal (filtro por sexo)'
-                    }
-                    
-                    senadoras.append(senadora_data)
-                    total_senadoras += 1
+        cells = row.find_all('td')
+        
+        if len(cells) >= 2:
+
+            if inside_feminino_section:
+                cells = row.find_all('td')
                 
-                except Exception as e:
-                    print(f"   ⚠ Erro ao processar linha: {e}")
-                    continue
-    
+                if len(cells) >= 6:
+                    try:
+                        nome_cell = cells[0]
+                        nome_link = nome_cell.find('a')
+                        
+                        if nome_link:
+                            nome = nome_link.get_text().strip()
+                            perfil_url = nome_link.get('href', '')
+                            
+                            if perfil_url and not perfil_url.startswith('http'):
+                                perfil_url = f"https://www25.senado.leg.br{perfil_url}"
+                        else:
+                            continue
+                        
+                        partido = cells[1].get_text().strip()
+                        uf = cells[2].get_text().strip()
+                        periodo = cells[3].get_text().strip()
+                        telefones = cells[4].get_text().strip()
+                        email = cells[5].get_text().strip()
+                        
+                        print(f"   ✓ Senadora encontrada: {nome} ({partido}-{uf})")
+                        
+                        senadora_data = {
+                            'nome': nome,
+                            'partido': partido,
+                            'uf': uf,
+                            'periodo_mandato': periodo,
+                            'telefones': telefones,
+                            'email': email,
+                            'link_perfil': perfil_url,
+                            'fonte_dados': 'Web Scraping HTML',
+                            'url_fonte': source_url,
+                            'data_extracao': time.strftime("%Y-%m-%d %H:%M:%S"),
+                            'metodo_extracao': 'BeautifulSoup - Senado Federal (filtro por sexo)'
+                        }
+                        
+                        senadoras.append(senadora_data)
+                        total_senadoras += 1
+                    
+                    except Exception as e:
+                        print(f"   ⚠ Erro ao processar linha: {e}")
+                        continue
+            
+            elif inside_masculino_section:
+                if cells[0].find('a'):
+                    total_homens += 1
+
+    stats = {"total_homens": total_homens}
+    with open('data/temp_stats_senado.json', 'w') as f:
+        json.dump(stats, f)
+    print(f"\n   Contagem finalizada: {len(senadoras)} Mulheres e {total_homens} Homens.")
+         
     if senadoras:
         print("\n5. Coletando informações detalhadas dos perfis individuais...\n")
         senadoras = collect_detailed_profiles(senadoras, headers)
@@ -177,15 +195,15 @@ def collect_detailed_profiles(senadoras: List[Dict], headers: Dict) -> List[Dict
                 senadora_completa = {**senadora, **detalhes}
                 detailed_senadoras.append(senadora_completa)
                 
-                print(f"                Dados detalhados coletados")
+                print(f"              ✓   Dados detalhados coletados")
             else:
-                print(f"                Erro HTTP {response.status_code}")
+                print(f"              ✗  Erro HTTP {response.status_code}")
                 detailed_senadoras.append(senadora)
             
             time.sleep(1.5)
             
         except Exception as e:
-            print(f"               Erro: {e}")
+            print(f"              ✗ Erro: {e}")
             detailed_senadoras.append(senadora)
     
     print()
@@ -228,6 +246,10 @@ def extract_profile_details(soup: BeautifulSoup, perfil_url: str) -> Dict:
         )
         if nat_match:
             naturalidade = nat_match.group(1).strip()
+            
+            if "Gabinete" in naturalidade:
+                naturalidade = naturalidade.split("Gabinete")[0].strip()
+            
             naturalidade = re.sub(r'\s+', ' ', naturalidade)
             detalhes['naturalidade'] = naturalidade[:100]
         
@@ -281,8 +303,7 @@ def extract_profile_details(soup: BeautifulSoup, perfil_url: str) -> Dict:
     
     return detalhes
 
-
-def save_to_csv(senadoras_data: List[Dict], filename: str = "../data/senadoras.csv") -> None:
+def save_to_csv(senadoras_data: List[Dict], filename: str = "data/senadoras.csv") -> None:
     
     if not senadoras_data:
         print("   ✗ Nenhum dado para salvar\n")
@@ -305,9 +326,7 @@ def save_to_csv(senadoras_data: List[Dict], filename: str = "../data/senadoras.c
             'formacao',
             'numero_mandatos',
             'comissoes',
-            'biografia_resumida',
             'link_perfil',
-            'url_perfil_detalhado',
             'fonte_dados',
             'url_fonte',
             'data_extracao',
@@ -316,7 +335,7 @@ def save_to_csv(senadoras_data: List[Dict], filename: str = "../data/senadoras.c
         
         print("6. Salvando dados em CSV...")
         print(f"   Arquivo: {filename}")
-        print(f"   Campos: {len(fieldnames)} atributos (requisito: mínimo 11) ✓")
+        print(f"   Campos: {len(fieldnames)} atributos")
         
         with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -327,12 +346,12 @@ def save_to_csv(senadoras_data: List[Dict], filename: str = "../data/senadoras.c
                 row = {field: senadora.get(field, '') for field in fieldnames}
                 writer.writerow(row)
         
-        print(f"    Dados salvos com sucesso!")
+        print(f"   ✓  Dados salvos com sucesso!")
         print(f"    Total de senadoras: {len(senadoras_data)}")
         print(f"    Caminho completo: {Path(filename).absolute()}\n")
         
     except Exception as e:
-        print(f"    Erro ao salvar CSV: {e}\n")
+        print(f"   ✗ Erro ao salvar CSV: {e}\n")
 
 
 def generate_statistics(senadoras_data: List[Dict]) -> Dict:
@@ -421,7 +440,7 @@ def main():
         
     else:
         print("=" * 70)
-        print("FALHA NO SCRAPING - Nenhum dado coletado ✗")
+        print("  ✗ FALHA NO SCRAPING - Nenhum dado coletado")
         print("=" * 70)
         print("\nPOSSÍVEIS CAUSAS:")
         print("  • Site mudou estrutura HTML")
