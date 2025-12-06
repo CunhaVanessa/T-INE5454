@@ -203,7 +203,7 @@ class DeputadasCSVToJSONConverter:
 
 def main():
     csv_input = 'data/deputadas.csv'
-    json_output = 'data/deputadas_filtrado.json' # Usando o nome correto do arquivo filtrado
+    json_output = 'data/deputadas.json' # Usando o nome correto do arquivo filtrado
     
     print("\n")
     print("┌" + "─" * 68 + "┐")
