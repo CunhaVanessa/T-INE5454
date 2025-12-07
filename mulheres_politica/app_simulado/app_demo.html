@@ -318,7 +318,7 @@
     <script>
         let currentData = [];
         let originalData = [];
-        let currentCategory = 'geral'; // Inicializa com geral
+        let currentCategory = 'geral';
         let currentPage = 1;
         const itemsPerPage = 10;
         
@@ -349,20 +349,18 @@
             currentCategory = category;
             currentPage = 1;
             
-            // UI dos botões
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.querySelector(`.tab-btn[onclick*="'${category}'"]`);
             if (activeBtn) activeBtn.classList.add('active');
             
             document.getElementById('section-title').textContent = dataSources[category].title;
             
-            // Mostra ou esconde o filtro de Cargo
             const cargoFilter = document.getElementById('cargo-filter');
             if (category === 'geral') {
                 cargoFilter.style.display = 'block';
             } else {
                 cargoFilter.style.display = 'none';
-                cargoFilter.value = ""; // Reseta o filtro ao esconder
+                cargoFilter.value = ""; 
             }
 
             const tbody = document.getElementById('table-body');
@@ -376,17 +374,12 @@
                 console.log(`Carregando ${category}...`);
                 const source = dataSources[category];
                 
-                // Simulação de erro apenas se o arquivo não existir fisicamente (tratado no catch)
-                // Removemos o throw manual para permitir carregar o que tiver
-
-                // Cache busting
                 const response = await fetch(`${source.url}?v=${new Date().getTime()}`);
                 
                 if (!response.ok) throw new Error(`Arquivo não encontrado: ${source.url}`);
                 
                 const jsonData = await response.json();
                 
-                // Tenta pegar a chave correta (rootKey) ou assume lista direta
                 let data = [];
                 if (Array.isArray(jsonData)) {
                     data = jsonData;
