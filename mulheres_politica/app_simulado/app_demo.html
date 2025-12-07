@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mulheres na Política Brasileira - Demo</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -34,19 +30,40 @@
             text-align: center;
         }
         
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { font-size: 1.2em; opacity: 0.9; }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            background-color: #f0f2f5;
+            padding: 15px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background-color: white;
+            color: #667eea;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn:hover { background-color: #e3f2fd; transform: translateY(-2px); }
+        
+        .tab-btn.active {
+            background-color: #667eea;
+            color: white;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
         }
         
-        header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-        
-        .content {
-            padding: 30px;
-        }
+        .content { padding: 30px; }
         
         .stats {
             display: grid;
@@ -65,50 +82,21 @@
             transition: transform 0.3s ease;
         }
         
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card h3 { font-size: 1.2em; margin-bottom: 10px; }
+        .stat-number, .number { font-size: 3em; font-weight: bold; }
         
-        .stat-card h3 {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
+        .data-section { margin-top: 30px; }
+        .data-section h2 { color: #667eea; margin-bottom: 20px; font-size: 2em; }
         
-        .stat-card .number {
-            font-size: 3em;
-            font-weight: bold;
-        }
-        
-        .stat-number {
-            font-size: 3em;
-            font-weight: bold;
-        }
-        
-        .data-section {
-            margin-top: 30px;
-        }
-        
-        .data-section h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 2em;
-        }
+        .table-container { overflow-x: auto; margin-top: 20px; }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             font-size: 0.9em;
-            overflow-x: auto;
-            display: block;
             white-space: nowrap;
-        }
-        
-        table thead, table tbody {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
         }
         
         table thead {
@@ -120,51 +108,16 @@
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
+        table th:nth-child(1) { width: 30%; }
+        table th:nth-child(2) { width: 10%; }
+        table th:nth-child(3) { width: 15%; } /* Cargo */
+        table th:nth-child(4) { width: 15%; }
+        table th:nth-child(5) { width: 15%; }
+        table th:nth-child(6) { width: 15%; }
         
-        table th:nth-child(1), table td:nth-child(1) {
-            width: 30%; /* Nome Civil */
-        }
-        
-        table th:nth-child(2), table td:nth-child(2) {
-            width: 20%; /* Partido */
-        }
-        
-        table th:nth-child(3), table td:nth-child(3) {
-            width: 15%; /* Cargo */
-        }
-        
-        table th:nth-child(4), table td:nth-child(4) {
-            width: 25%; /* Naturalidade */
-        }
-        
-        table th:nth-child(5), table td:nth-child(5) {
-            width: 10%; /* Propostas Relatadas */
-        }
-        
-        table tbody tr {
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        
-        table tbody tr:hover {
-            background-color: #e3f2fd;
-            transform: scale(1.01);
-        }
-        
-        .table-container {
-            overflow-x: auto;
-            margin-top: 20px;
-        }
-        
-        table th {
-            min-height: 60px;
-            vertical-align: middle;
-            line-height: 1.2;
-            padding: 15px 8px;
-        }
+        table tbody tr { cursor: pointer; transition: background-color 0.3s ease; }
+        table tbody tr:hover { background-color: #e3f2fd; }
         
         .pagination {
             display: flex;
@@ -181,24 +134,10 @@
             color: #667eea;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
         }
         
-        .pagination button:hover:not(:disabled) {
-            background: #667eea;
-            color: white;
-        }
-        
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .pagination span {
-            margin: 0 15px;
-            font-weight: bold;
-            color: #333;
-        }
+        .pagination button:hover:not(:disabled) { background: #667eea; color: white; }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .filter-section {
             margin-bottom: 20px;
@@ -207,12 +146,10 @@
             flex-wrap: wrap;
         }
         
-        .filter-section input,
-        .filter-section select {
+        .filter-section input, .filter-section select {
             padding: 10px;
             border: 2px solid #667eea;
             border-radius: 5px;
-            font-size: 1em;
             min-width: 200px;
         }
         
@@ -222,22 +159,9 @@
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 1em;
             cursor: pointer;
-            transition: opacity 0.3s ease;
         }
-        
-        .filter-section button:hover {
-            opacity: 0.9;
-        }
-        
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        
+
         .modal {
             display: none;
             position: fixed;
@@ -252,46 +176,24 @@
         .modal-content {
             background-color: white;
             margin: 5% auto;
-            padding: 0;
             border-radius: 15px;
             width: 90%;
             max-width: 800px;
             max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
         
         .modal-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
-            border-radius: 15px 15px 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-        
-        .close {
-            color: white;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 1;
-        }
-        
-        .close:hover {
-            opacity: 0.7;
-        }
-        
-        .modal-body {
-            padding: 30px;
-        }
+        .close { color: white; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-body { padding: 30px; }
         
         .detail-grid {
             display: grid;
@@ -306,19 +208,14 @@
             border-left: 4px solid #667eea;
         }
         
-        .detail-item h4 {
-            margin: 0 0 8px 0;
-            color: #667eea;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .detail-item h4 { color: #667eea; margin-bottom: 8px; text-transform: uppercase; font-size: 0.9em; }
+        .detail-item p { font-weight: 500; color: #333; word-wrap: break-word;}
         
-        .detail-item p {
-            margin: 0;
-            font-size: 1.1em;
-            font-weight: 500;
-            color: #333;
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
         }
     </style>
 </head>
@@ -329,59 +226,62 @@
             <p>Dados sobre a representatividade feminina no Congresso Nacional</p>
         </header>
         
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('geral')">Visão Geral (Todas)</button>
+            <button class="tab-btn" onclick="switchTab('deputadas')">Deputadas Federais</button>
+            <button class="tab-btn" onclick="switchTab('senadoras')">Senadoras Federais</button>
+            <button class="tab-btn" onclick="switchTab('vereadoras')">Vereadoras Municipais</button>
+        </div>
+
         <div class="content">
             <div class="stats">
                 <div class="stat-card">
-                    <h3>Total de Mulheres</h3>
-                    <span class="stat-number" id="total-deputadas">0</span>
-                </div>
-                <div class="stat-card">
-                    <h3>Total de Propostas</h3>
-                    <div class="number" id="total-propostas">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Média de Votações</h3>
-                    <div class="number" id="media-votacoes">0</div>
+                    <h3 id="label-total">Total de Parlamentares</h3>
+                    <span class="stat-number" id="total-records">0</span>
                 </div>
                 <div class="stat-card">
                     <h3>Partidos Diferentes</h3>
                     <div class="number" id="total-partidos">0</div>
                 </div>
+                <div class="stat-card">
+                    <h3>Estados Representados</h3>
+                    <div class="number" id="total-ufs">0</div>
+                </div>
             </div>
             
             <div class="data-section">
-                <h2>Filtrar Dados</h2>
+                <h2 id="section-title">Visão Geral</h2>
+                
                 <div class="filter-section">
-                    <input type="text" id="filter-name" placeholder="Nome">
+                    <input type="text" id="filter-name" placeholder="Filtrar por Nome">
+                    <select id="cargo-filter">
+                        <option value="">Todos os Cargos</option>
+                    </select>
                     <select id="filter-party">
                         <option value="">Todos os Partidos</option>
                     </select>
-                                    <select id="naturalidade-filter">
-                    <option value="">Todas as Naturalidades</option>
-                </select>
-                <select id="cargo-filter">
-                    <option value="">Todos os Cargos</option>
-                </select>
-                <input type="number" id="propostas-filter" placeholder="Min. Propostas">
-                <button onclick="filterData()">Filtrar</button>
-                <button onclick="clearFilters()">Limpar</button>
+                    <select id="naturalidade-filter">
+                        <option value="">Todas as Naturalidades</option>
+                    </select>
+                    <button onclick="filterData()">Filtrar</button>
+                    <button onclick="clearFilters()">Limpar</button>
                 </div>
                 
-                <h2>Lista de Mulheres na Política</h2>
                 <div class="table-container">
                     <table id="data-table">
                     <thead>
                         <tr>
-                            <th>Nome Civil</th>
+                            <th>Nome</th>
                             <th>Partido</th>
                             <th>Cargo</th>
                             <th>Naturalidade</th>
-                            <th>Propostas Relatadas</th>
+                            <th>Período Mandato</th>
+                            <th>Data Nascimento</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 30px;">
+                            <td colspan="6" style="text-align: center; padding: 30px;">
                                 Carregando dados...
                             </td>
                         </tr>
@@ -397,17 +297,15 @@
             </div>
         </div>
         
-        <!-- Modal de Detalhes -->
-        <div id="deputada-modal" class="modal">
+        <div id="detail-modal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 id="modal-title">Detalhes da Deputada</h2>
+                    <h2 id="modal-title">Detalhes</h2>
                     <span class="close" onclick="closeModal()">&times;</span>
                 </div>
                 <div class="modal-body">
                     <div class="detail-grid" id="modal-details">
-                        <!-- Detalhes serão inseridos aqui via JavaScript -->
-                    </div>
+                        </div>
                 </div>
             </div>
         </div>
@@ -418,101 +316,155 @@
     </div>
     
     <script>
-        let deputadasData = [];
+        let currentData = [];
         let originalData = [];
+        let currentCategory = 'geral'; // Inicializa com geral
         let currentPage = 1;
         const itemsPerPage = 10;
         
-        async function loadData() {
+        const dataSources = {
+            geral: {
+                url: 'data/mulheres_politica_consolidado.json',
+                rootKey: 'parlamentares',
+                title: 'Visão Geral Consolidada'
+            },
+            deputadas: {
+                url: 'data/deputadas.json',
+                rootKey: 'deputadas',
+                title: 'Deputadas Federais'
+            },
+            senadoras: {
+                url: 'data/senadoras.json',
+                rootKey: 'senadoras',
+                title: 'Senadoras da República'
+            },
+            vereadoras: {
+                url: 'data/vereadoras.json',
+                rootKey: 'vereadoras',
+                title: 'Vereadoras (Eleições 2024)'
+            }
+        };
+
+        async function switchTab(category) {
+            currentCategory = category;
+            currentPage = 1;
+            
+            // UI dos botões
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector(`.tab-btn[onclick*="'${category}'"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+            
+            document.getElementById('section-title').textContent = dataSources[category].title;
+            
+            // Mostra ou esconde o filtro de Cargo
+            const cargoFilter = document.getElementById('cargo-filter');
+            if (category === 'geral') {
+                cargoFilter.style.display = 'block';
+            } else {
+                cargoFilter.style.display = 'none';
+                cargoFilter.value = ""; // Reseta o filtro ao esconder
+            }
+
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px;">Carregando...</td></tr>';
+            
+            await loadData(category);
+        }
+
+        async function loadData(category) {
             try {
-                console.log('Carregando dados do JSON...');
-                const response = await fetch('data/deputadas_filtrado.json');
+                console.log(`Carregando ${category}...`);
+                const source = dataSources[category];
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                // Simulação de erro apenas se o arquivo não existir fisicamente (tratado no catch)
+                // Removemos o throw manual para permitir carregar o que tiver
+
+                // Cache busting
+                const response = await fetch(`${source.url}?v=${new Date().getTime()}`);
+                
+                if (!response.ok) throw new Error(`Arquivo não encontrado: ${source.url}`);
                 
                 const jsonData = await response.json();
-                console.log('Estrutura do JSON:', jsonData);
                 
-                // Acessar o array de deputadas dentro do objeto JSON
-                deputadasData = jsonData.deputadas || [];
-                originalData = [...deputadasData]; // Cópia para filtros
-                
-                console.log(`Carregados ${deputadasData.length} registros`);
+                // Tenta pegar a chave correta (rootKey) ou assume lista direta
+                let data = [];
+                if (Array.isArray(jsonData)) {
+                    data = jsonData;
+                } else if (jsonData[source.rootKey]) {
+                    data = jsonData[source.rootKey];
+                } else if (jsonData.dados) {
+                    data = jsonData.dados;
+                }
+
+                currentData = data;
+                originalData = [...currentData];
                 
                 updateStats();
-                renderTable(deputadasData);
                 populateFilters();
+                renderTable(currentData);
                 
             } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                const tbody = document.getElementById('table-body');
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 30px;">
-                            Erro ao carregar dados: ${error.message}<br>
-                            Certifique-se de que o arquivo deputadas_filtrado.json existe em data/
-                        </td>
-                    </tr>
-                `;
+                console.error(error);
+                currentData = [];
+                originalData = [];
+                updateStats();
+                
+                let msg = error.message;
+                if (category === 'vereadoras') msg += " (Verifique se o arquivo data/vereadoras.json existe)";
+                
+                document.getElementById('table-body').innerHTML = `
+                    <tr><td colspan="6" style="text-align:center; padding:30px; color: #666;">
+                        ${msg}
+                    </td></tr>`;
+                document.getElementById('page-info').textContent = "Página 0 de 0";
             }
         }
         
         function updateStats() {
-            const totalDeputadas = deputadasData.length;
+            const total = currentData.length;
+            const partidos = new Set(currentData.map(d => d.partido).filter(p => p && p !== 'null'));
+            const ufs = new Set(currentData.map(d => d.uf).filter(u => u && u.length === 2));
             
-            // Calcular total de propostas
-            const totalPropostas = deputadasData.reduce((sum, dep) => {
-                const propostas = parseInt(dep.propostas_autoria) || 0;
-                return sum + propostas;
-            }, 0);
+            document.getElementById('total-records').textContent = total.toLocaleString('pt-BR');
+            document.getElementById('total-partidos').textContent = partidos.size;
+            document.getElementById('total-ufs').textContent = ufs.size;
             
-            // Calcular média de votações
-            const totalVotacoes = deputadasData.reduce((sum, dep) => {
-                const votacoes = parseInt(dep.votacoes_plenario) || 0;
-                return sum + votacoes;
-            }, 0);
-            const mediaVotacoes = totalDeputadas > 0 ? Math.round(totalVotacoes / totalDeputadas) : 0;
-            
-            // Contar partidos únicos
-            const partidos = new Set(deputadasData.map(dep => dep.partido).filter(p => p && p !== 'null'));
-            const totalPartidos = partidos.size;
-            
-            document.getElementById('total-deputadas').textContent = totalDeputadas;
-            document.getElementById('total-propostas').textContent = totalPropostas.toLocaleString('pt-BR');
-            document.getElementById('media-votacoes').textContent = mediaVotacoes;
-            document.getElementById('total-partidos').textContent = totalPartidos;
+            const labels = {
+                geral: "Total de Mulheres",
+                deputadas: "Total de Deputadas",
+                senadoras: "Total de Senadoras",
+                vereadoras: "Total de Vereadoras"
+            };
+            document.getElementById('label-total').textContent = labels[currentCategory] || "Total";
         }
         
+        function formatMandato(mandato) {
+            if (!mandato || mandato === 'null') return 'N/A';
+            if (mandato.toString().trim() === '3216 - 0000') return '<span style="color:red; font-weight:bold;">Não está em exercício</span>';
+            return mandato;
+        }
+
         function renderTable(data) {
             const tbody = document.getElementById('table-body');
             
             if (data.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 30px;">
-                            Nenhum resultado encontrado com os filtros aplicados.
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px;">Nenhum resultado encontrado.</td></tr>';
                 updatePagination(0);
                 return;
             }
             
-            // Calcular paginação
             const totalPages = Math.ceil(data.length / itemsPerPage);
             const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const pageData = data.slice(startIndex, endIndex);
+            const pageData = data.slice(startIndex, startIndex + itemsPerPage);
             
-            tbody.innerHTML = pageData.map((deputada, index) => `
-                <tr onclick="openModal(${startIndex + index})" style="cursor: pointer;">
-                    <td>${deputada.nome_civil || 'N/A'}</td>
-                    <td>${deputada.partido || 'N/A'}</td>
-                    <td>${deputada.cargo || 'N/A'}</td>
-                    <td>${deputada.naturalidade || 'N/A'}</td>
-                    <td>${deputada.propostas_relatadas || '0'}</td>
+            tbody.innerHTML = pageData.map((item, index) => `
+                <tr onclick="openModal(${startIndex + index})">
+                    <td><strong>${item.nome || item.nome_civil || 'N/A'}</strong></td>
+                    <td>${item.partido || 'N/A'}</td>
+                    <td>${item.cargo || 'N/A'}</td>
+                    <td>${item.naturalidade || 'N/A'}</td>
+                    <td>${formatMandato(item.periodo_mandato)}</td>
+                    <td>${item.data_nascimento || 'N/A'}</td>
                 </tr>
             `).join('');
             
@@ -520,53 +472,49 @@
         }
         
         function populateFilters() {
-            // Popular select de partidos
-            const partidos = [...new Set(originalData.map(dep => dep.partido).filter(p => p && p !== 'null'))].sort();
+            // Partidos
+            const partidos = [...new Set(originalData.map(d => d.partido).filter(p => p))].sort();
             const partySelect = document.getElementById('filter-party');
             partySelect.innerHTML = '<option value="">Todos os Partidos</option>';
-            partidos.forEach(partido => {
-                partySelect.innerHTML += `<option value="${partido}">${partido}</option>`;
-            });
+            partidos.forEach(p => partySelect.innerHTML += `<option value="${p}">${p}</option>`);
             
-            // Popular select de naturalidades
-            const naturalidades = [...new Set(originalData.map(dep => dep.naturalidade).filter(n => n && n !== 'null'))].sort();
+            // Naturalidades
+            const naturalidades = [...new Set(originalData.map(d => d.naturalidade).filter(n => n))].sort();
             const natSelect = document.getElementById('naturalidade-filter');
             natSelect.innerHTML = '<option value="">Todas as Naturalidades</option>';
-            naturalidades.forEach(nat => {
-                natSelect.innerHTML += `<option value="${nat}">${nat}</option>`;
-            });
-            
-            // Popular select de cargos
-            const cargos = [...new Set(originalData.map(dep => dep.cargo).filter(c => c && c !== 'null'))].sort();
-            const cargoSelect = document.getElementById('cargo-filter');
-            cargoSelect.innerHTML = '<option value="">Todos os Cargos</option>';
-            cargos.forEach(cargo => {
-                cargoSelect.innerHTML += `<option value="${cargo}">${cargo}</option>`;
-            });
+            naturalidades.forEach(n => natSelect.innerHTML += `<option value="${n}">${n}</option>`);
+
+            // Cargos (Apenas se estiver na aba Geral)
+            if (currentCategory === 'geral') {
+                const cargos = [...new Set(originalData.map(d => d.cargo).filter(c => c))].sort();
+                const cargoSelect = document.getElementById('cargo-filter');
+                cargoSelect.innerHTML = '<option value="">Todos os Cargos</option>';
+                cargos.forEach(c => cargoSelect.innerHTML += `<option value="${c}">${c}</option>`);
+            }
         }
         
         function filterData() {
             const name = document.getElementById('filter-name').value.toLowerCase();
             const party = document.getElementById('filter-party').value;
-            const naturalidade = document.getElementById('naturalidade-filter').value;
-            const cargo = document.getElementById('cargo-filter').value;
-            const minPropostas = parseInt(document.getElementById('propostas-filter').value) || 0;
+            const nat = document.getElementById('naturalidade-filter').value;
+            const cargo = document.getElementById('cargo-filter').value; // Novo
             
-            currentPage = 1; // Reset para primeira página ao filtrar
+            currentPage = 1;
             
-            const filtered = originalData.filter(deputada => {
-                const nomeMatch = !name || (deputada.nome_civil && deputada.nome_civil.toLowerCase().includes(name));
-                const partyMatch = !party || deputada.partido === party;
-                const natMatch = !naturalidade || deputada.naturalidade === naturalidade;
-                const cargoMatch = !cargo || deputada.cargo === cargo;
-                const propostasMatch = (parseInt(deputada.propostas_autoria) || 0) >= minPropostas;
+            currentData = originalData.filter(item => {
+                const n = (item.nome || item.nome_civil || '').toLowerCase();
+                const matchName = !name || n.includes(name);
+                const matchParty = !party || item.partido === party;
+                const matchNat = !nat || item.naturalidade === nat;
                 
-                return nomeMatch && partyMatch && natMatch && cargoMatch && propostasMatch;
+                // Filtro de cargo só aplica se tiver selecionado
+                const matchCargo = !cargo || item.cargo === cargo;
+                
+                return matchName && matchParty && matchNat && matchCargo;
             });
             
-            deputadasData = filtered;
             updateStats();
-            renderTable(deputadasData);
+            renderTable(currentData);
         }
         
         function clearFilters() {
@@ -574,116 +522,97 @@
             document.getElementById('filter-party').value = '';
             document.getElementById('naturalidade-filter').value = '';
             document.getElementById('cargo-filter').value = '';
-            document.getElementById('propostas-filter').value = '';
-            
-            deputadasData = [...originalData];
+            currentData = [...originalData];
             currentPage = 1;
             updateStats();
-            renderTable(deputadasData);
+            renderTable(currentData);
         }
         
         function updatePagination(totalPages) {
-            const pageInfo = document.getElementById('page-info');
-            const prevBtn = document.getElementById('prev-page');
-            const nextBtn = document.getElementById('next-page');
-            
-            pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
-            
-            prevBtn.disabled = currentPage <= 1;
-            nextBtn.disabled = currentPage >= totalPages;
+            document.getElementById('page-info').textContent = `Página ${currentPage} de ${totalPages || 1}`;
+            document.getElementById('prev-page').disabled = currentPage <= 1;
+            document.getElementById('next-page').disabled = currentPage >= totalPages || totalPages === 0;
         }
         
-        function changePage(direction) {
-            const totalPages = Math.ceil(deputadasData.length / itemsPerPage);
-            
-            if (direction === -1 && currentPage > 1) {
-                currentPage--;
-            } else if (direction === 1 && currentPage < totalPages) {
-                currentPage++;
-            }
-            
-            renderTable(deputadasData);
+        function changePage(dir) {
+            const totalPages = Math.ceil(currentData.length / itemsPerPage);
+            if (dir === -1 && currentPage > 1) currentPage--;
+            else if (dir === 1 && currentPage < totalPages) currentPage++;
+            renderTable(currentData);
         }
         
         function openModal(index) {
-            const deputada = deputadasData[index];
-            if (!deputada) return;
+            const item = currentData[index];
+            if (!item) return;
             
-            document.getElementById('modal-title').textContent = deputada.nome_civil || 'Deputada';
+            document.getElementById('modal-title').textContent = item.nome || item.nome_civil;
+            const grid = document.getElementById('modal-details');
+
+            const ignore = ['id', 'foto', 'url_fonte', 'metodo_extracao', 'municipio']; // Adicionei municipio aos ignorados se quiser, ou mostre
+
+            const labels = {
+                'nome': 'Nome',
+                'nome_civil': 'Nome Civil',
+                'cargo': 'Cargo',
+                'partido': 'Partido',
+                'uf': 'Estado (UF)',
+                'municipio': 'Município',
+                'email': 'E-mail',
+                'telefones': 'Telefones',
+                'numero_mandatos':'Número Mandatos',
+                'data_nascimento': 'Nascimento',
+                'naturalidade': 'Naturalidade',
+                'periodo_mandato': 'Mandato',
+                'comissoes': 'Comissões',
+                'biografia_resumida': 'Biografia',
+                'link_perfil': 'Fonte Original',
+                'situacao': 'Situação',
+                'grau_instrucao': 'Instrução',
+                'ocupacao': 'Ocupação'
+            };
+
+            let html = '';
             
-            const modalDetails = document.getElementById('modal-details');
-            modalDetails.innerHTML = `
-                <div class="detail-item">
-                    <h4>Nome Civil</h4>
-                    <p>${deputada.nome_civil || 'N/A'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Partido</h4>
-                    <p>${deputada.partido || 'N/A'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Cargo</h4>
-                    <p>${deputada.cargo || 'N/A'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Naturalidade</h4>
-                    <p>${deputada.naturalidade || 'N/A'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Data de Nascimento</h4>
-                    <p>${deputada.data_nascimento || 'N/A'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Propostas de Autoria</h4>
-                    <p>${deputada.propostas_autoria || '0'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Propostas Relatadas</h4>
-                    <p>${deputada.propostas_relatadas || '0'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Votações no Plenário</h4>
-                    <p>${deputada.votacoes_plenario || '0'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Discursos no Plenário</h4>
-                    <p>${deputada.discursos_plenario || '0'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Salário Mensal Bruto</h4>
-                    <p>${deputada.salario_mensal_bruto ? 'R$ ' + parseFloat(deputada.salario_mensal_bruto).toLocaleString('pt-BR', {minimumFractionDigits: 2}) : 'N/A'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Imóvel Funcional</h4>
-                    <p>${deputada.imovel_funcional || 'N/A'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Auxílio Moradia</h4>
-                    <p>${deputada.auxilio_moradia || 'N/A'}</p>
-                </div>
-                <div class="detail-item">
-                    <h4>Viagens em Missão Oficial</h4>
-                    <p>${deputada.viagens_missao_oficial || '0'}</p>
-                </div>
-            `;
+            // Ordem de prioridade para exibição
+            const priorityKeys = ['nome', 'cargo', 'partido', 'uf', 'municipio', 'periodo_mandato'];
             
-            document.getElementById('deputada-modal').style.display = 'block';
+            priorityKeys.forEach(key => {
+                if (item[key]) {
+                    let val = item[key];
+                    if (key === 'periodo_mandato') val = formatMandato(val);
+                    html += `
+                        <div class="detail-item">
+                            <h4>${labels[key] || key}</h4>
+                            <p>${val}</p>
+                        </div>`;
+                }
+            });
+
+            for (const [key, val] of Object.entries(item)) {
+                if (!priorityKeys.includes(key) && !ignore.includes(key) && val && val !== 'null') {
+                     html += `
+                        <div class="detail-item">
+                            <h4>${labels[key] || key.replace(/_/g, ' ')}</h4>
+                            <p>${val}</p>
+                        </div>`;
+                }
+            }
+            
+            grid.innerHTML = html;
+            document.getElementById('detail-modal').style.display = 'block';
         }
         
         function closeModal() {
-            document.getElementById('deputada-modal').style.display = 'none';
+            document.getElementById('detail-modal').style.display = 'none';
         }
         
-        // Fechar modal ao clicar fora dele
-        window.onclick = function(event) {
-            const modal = document.getElementById('deputada-modal');
-            if (event.target === modal) {
-                closeModal();
-            }
+        window.onclick = function(e) {
+            if (e.target === document.getElementById('detail-modal')) closeModal();
         }
         
-        // Load data on page load
-        window.onload = loadData;
+        window.onload = () => {
+             switchTab('geral');
+        };
     </script>
 </body>
 </html>
