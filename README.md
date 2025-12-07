@@ -473,18 +473,18 @@ xdg-open app_simulado/app_demo.html
 
 ## Equipe de Desenvolvimento
 
-| Desenvolvedor | Responsabilidade |
-|---------------|------------------|
-| **Vanessa Cunha** | Arquitetura geral, scrapers, dashboard |
-| **Jaqueline Bieber** | Análise de dados, validação |  
-| **Arthur Lorenzetti** | Testes, documentação |
+| Desenvolvedor | 
+|---------------|
+| **Vanessa Cunha** |
+| **Jaqueline Bieber** |
+| **Arthur Lorenzetti** |
 
 ## Informações Acadêmicas
 
 - **Disciplina:** INE5454 - Programação para Web
 - **Instituição:** Universidade Federal de Santa Catarina (UFSC)
-- **Semestre:** 2024.2
-- **Professor:** [Nome do Professor]
+- **Semestre:** 2025.2
+- **Professor:** Carine
 
 ---
 
