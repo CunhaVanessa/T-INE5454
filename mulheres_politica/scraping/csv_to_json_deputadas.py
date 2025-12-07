@@ -9,10 +9,10 @@ import json
 from datetime import datetime
 from typing import Dict, List
 from pathlib import Path
-
+from webscraping_deputadas import get_total_homens
 
 class DeputadasCSVToJSONConverter:
-    
+   
     def __init__(self, csv_file_path: str, json_output_path: str):
         """
         Inicializa o conversor.
@@ -27,7 +27,7 @@ class DeputadasCSVToJSONConverter:
     def process_csv_to_json(self) -> List[Dict]:
         """
         Processa o arquivo CSV e extrai os dados para formato JSON.
-
+        
         Returns:
             List[Dict]: Lista de deputadas com dados filtrados
         """
@@ -41,14 +41,14 @@ class DeputadasCSVToJSONConverter:
                 
                 for i, row in enumerate(reader, 1):
                     nome = row.get('nome', 'N/A')
-                    # print(f"   [{i}] Processando: {nome}")
-                    
-                    # Mapeamento completo dos campos solicitados
+                    print(f"   [{i}] Processando: {nome}")
+
                     deputada_info = {
-                        'nome': row.get('nome', ''),
+                        'nome': row.get('nome', '').split('(')[0],
                         'nome_civil': row.get('nome_civil', ''),
                         'partido': row.get('partido', ''),
                         'uf': row.get('uf', ''),
+                        'cargo': "Deputada",
                         'periodo_mandato': row.get('periodo_mandato', ''),
                         'telefones': row.get('telefones', ''),
                         'email': row.get('email', ''),
@@ -61,8 +61,7 @@ class DeputadasCSVToJSONConverter:
                         'link_perfil': row.get('link_perfil', ''),
                         'fonte_dados': row.get('fonte_dados', 'Web Scraping HTML'),
                         'url_fonte':  row.get('url_fonte', ''),
-                        'data_extracao': row.get('data_extracao', ''),
-                        'metodo_extracao': row.get('metodo_extracao', '')
+                        'data_extracao': row.get('data_extracao', '')
                     }
                     
                     deputadas_data.append(deputada_info)
@@ -82,6 +81,12 @@ class DeputadasCSVToJSONConverter:
         """
         Salva os dados das deputadas em arquivo JSON.
         
+        Estrutura final:
+        {
+            "metadata": { ... },
+            "deputadas": [ ... ]
+        }
+        
         Args:
             deputadas_data: Lista de dados das deputadas
         
@@ -92,13 +97,25 @@ class DeputadasCSVToJSONConverter:
             # Criar diretório se não existir
             Path(self.json_output_path).parent.mkdir(parents=True, exist_ok=True)
 
-            # Contagem de campos preenchidos
             campos_nao_vazios = {
-                'nome': 0, 'nome_civil': 0, 'partido': 0, 'uf': 0, 'periodo_mandato': 0,
-                'telefones': 0, 'email': 0, 'data_nascimento': 0, 'naturalidade': 0,
-                'profissao': 0, 'formacao': 0, 'numero_mandatos': 0, 'comissoes': 0,
-                'link_perfil': 0, 'fonte_dados': 0, 'url_fonte': 0, 'data_extracao': 0,
-                'metodo_extracao': 0
+                'nome': 0,
+                'nome_civil': 0,
+                'partido': 0,
+                'uf': 0,
+                'cargo': 0,
+                'periodo_mandato': 0,
+                'telefones': 0,
+                'email': 0,
+                'data_nascimento': 0,
+                'naturalidade': 0,
+                'profissao': 0,
+                'formacao': 0,
+                'numero_mandatos': 0,
+                'comissoes': 0,
+                'link_perfil': 0,
+                'fonte_dados': 0,
+                'url_fonte': 0,
+                'data_extracao': 0
             }
             
             for deputada in deputadas_data:
@@ -106,34 +123,42 @@ class DeputadasCSVToJSONConverter:
                     if deputada.get(campo) and str(deputada.get(campo)).strip():
                         campos_nao_vazios[campo] += 1
             
-            # --- LÓGICA DE ESTATÍSTICAS DE GÊNERO ---
-            total_homens = 0
-            try:
-                # Tenta ler o arquivo temporário gerado pelo scraper
-                with open('data/temp_stats_camara.json', 'r') as f:
-                    stats = json.load(f)
-                    total_homens = stats.get('total_homens', 0)
-            except:
-                pass # Se falhar, assume 0 e segue a vida
-            
+            total_homens = get_total_homens()
+                
             qtd_mulheres = len(deputadas_data)
             total_geral = qtd_mulheres + total_homens
             pct_mulheres = 0
             if total_geral > 0:
                 pct_mulheres = round((qtd_mulheres / total_geral) * 100, 2)
-            # ----------------------------------------
-
+            
             output_data = {
                 'metadata': {
                     'fonte': 'Câmara dos Deputados',
                     'tipo': 'Deputadas Federais',
                     'total_registros': len(deputadas_data),
                     'data_processamento': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    'campos': list(campos_nao_vazios.keys()),
-                    'total_campos': len(campos_nao_vazios),
+                    'campos': [
+                        'nome',
+                        'nome_civil',
+                        'partido',
+                        'uf',
+                        'cargo',
+                        'periodo_mandato',
+                        'telefones',
+                        'email',
+                        'data_nascimento',
+                        'naturalidade',
+                        'profissao',
+                        'formacao',
+                        'numero_mandatos',
+                        'comissoes',
+                        'link_perfil',
+                        'fonte_dados',
+                        'url_fonte',
+                        'data_extracao'
+                    ],
+                    'total_campos': 17,
                     'campos_preenchidos': campos_nao_vazios,
-                    
-                    # Bloco de estatísticas solicitado
                     'estatisticas_genero': {
                         'total_mulheres': qtd_mulheres,
                         'total_homens': total_homens,
@@ -151,15 +176,14 @@ class DeputadasCSVToJSONConverter:
                 json.dump(output_data, jsonfile, ensure_ascii=False, indent=2)
             
             print(f"   ✓ Arquivo JSON salvo com sucesso!")
-            print(f"   ✓ Total de deputadas: {len(deputadas_data)}")
+            print(f"   ✓ Total de senadoras: {len(deputadas_data)}")
+            print(f"   ✓ Total de campos: 17 ✓")
+            print(f"\n4. Estatísticas de preenchimento dos campos:\n")
             
-            # Exibe estatísticas se houver dados
-            if deputadas_data:
-                print(f"\n4. Estatísticas de preenchimento dos campos:\n")
-                for campo, count in campos_nao_vazios.items():
-                    percentual = (count / len(deputadas_data)) * 100
-                    barra = "█" * int(percentual / 5)
-                    print(f"   • {campo:20} {barra:20} {count:3}/{len(deputadas_data)} ({percentual:.1f}%)")
+            for campo, count in campos_nao_vazios.items():
+                percentual = (count / len(deputadas_data)) * 100 if deputadas_data else 0
+                barra = "█" * int(percentual / 5)
+                print(f"   • {campo:20} {barra:20} {count:3}/{len(deputadas_data)} ({percentual:.1f}%)")
             
             print()
             return True
@@ -177,13 +201,7 @@ class DeputadasCSVToJSONConverter:
         """
 
         deputadas_data = self.process_csv_to_json()
-        
-        if not deputadas_data:
-            print("✗ Nenhum dado foi processado.\n")
-            # Mesmo sem dados, pode ser útil tentar salvar o JSON vazio com metadados zerados, 
-            # mas o padrão aqui é retornar False.
-            return False
-        
+            
         success = self.save_to_json(deputadas_data)
         
         if success:
@@ -203,12 +221,11 @@ class DeputadasCSVToJSONConverter:
 
 def main():
     csv_input = 'data/deputadas.csv'
-    json_output = 'data/deputadas.json' # Usando o nome correto do arquivo filtrado
+    json_output = 'data/deputadas.json'
     
     print("\n")
     print("┌" + "─" * 68 + "┐")
     print("│        CONVERSOR CSV → JSON - DEPUTADAS FEDERAIS                   │")
-    print("└" + "─" * 68 + "┘")
     print()
     
     converter = DeputadasCSVToJSONConverter(csv_input, json_output)
