@@ -1,5 +1,5 @@
 """
-Conversor CSV → JSON - Deputadas Federais
+Conversor CSV para JSON - Deputadas Federais
 
 Usa os dados JÁ EXTRAÍDOS e presentes nas colunas do CSV.
 """
@@ -207,7 +207,7 @@ def main():
     
     print("\n")
     print("┌" + "─" * 68 + "┐")
-    print("│        CONVERSOR CSV → JSON - DEPUTADAS FEDERAIS                   │")
+    print("│        CONVERSOR CSV PARA JSON - DEPUTADAS FEDERAIS                │")
     print("└" + "─" * 68 + "┘")
     print()
     
@@ -215,11 +215,11 @@ def main():
     success = converter.convert()
     
     if success:
-        print("✅ Conversão bem-sucedida!")
+        print("[SUCESSO] Conversão bem-sucedida!")
         print(f"📄 Arquivo JSON disponível em: {json_output}")
         print()
     else:
-        print("❌ Erro na conversão!")
+        print("[ERRO] Erro na conversão!")
         print()
         print("POSSÍVEIS CAUSAS:")
         print("  • Arquivo CSV não encontrado")

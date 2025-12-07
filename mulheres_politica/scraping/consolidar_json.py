@@ -74,7 +74,7 @@ class JSONConsolidator:
             print("   ✗ Falha ao carregar deputadas\n")
             deputadas_list = []
         else:
-            deputadas_list = deputadas_data.get('deputadas', [])
+            deputadas_list = deputadas_data.get('deputadas', []) # type: ignore
             
         print(f"   ✓ {len(deputadas_list)} deputadas carregadas")
         
@@ -86,7 +86,7 @@ class JSONConsolidator:
             print("   ✗ Falha ao carregar senadoras\n")
             senadoras_list = []
         else:
-            senadoras_list = senadoras_data.get('senadoras', [])
+            senadoras_list = senadoras_data.get('senadoras', []) # type: ignore
             
         print(f"   ✓ {len(senadoras_list)} senadoras carregadas")
 
@@ -228,7 +228,7 @@ class JSONConsolidator:
             print("CONSOLIDAÇÃO CONCLUÍDA COM SUCESSO! ✓")
             print("=" * 70)
             print()
-            print("📊 RESUMO FINAL:")
+            print("RESUMO FINAL:")
             print(f"   • Total de parlamentares: {total}")
             print(f"   • Deputadas Federais: {len(deputadas_list)}")
             print(f"   • Senadoras Federais: {len(senadoras_list)}")
@@ -243,7 +243,7 @@ class JSONConsolidator:
                     print(f"   • {cargo:20} {count:4} ({percentual:.1f}%)")
             print()
             
-            print("🏛️ TOP 10 PARTIDOS:")
+            print("TOP 10 PARTIDOS:")
             for i, (partido, count) in enumerate(list(dist_partido.items())[:10], 1):
                 if total > 0:
                     percentual = (count / total) * 100
@@ -251,7 +251,7 @@ class JSONConsolidator:
                     print(f"   {i:2}. {partido:10} {barra:20} {count:3} ({percentual:.1f}%)")
             print()
             
-            print("🗺️ TOP 10 ESTADOS:")
+            print("TOP 10 ESTADOS:")
             for i, (uf, count) in enumerate(list(dist_uf.items())[:10], 1):
                 if total > 0:
                     percentual = (count / total) * 100
@@ -268,10 +268,10 @@ class JSONConsolidator:
 
 def main():
     # Caminhos atualizados para os arquivos filtrados que você já tem
-    deputadas_json = 'data/deputadas.json'
-    senadoras_json = 'data/senadoras.json'
-    vereadoras_json = 'data/vereadoras.json'
-    output_json = 'data/mulheres_politica_consolidado.json'
+    deputadas_json = '../data/deputadas.json'
+    senadoras_json = '../data/senadoras.json'
+    vereadoras_json = '../data/vereadoras.json'
+    output_json = '../data/mulheres_politica_consolidado.json'
     
     print("\n")
     print("┌" + "─" * 68 + "┐")
@@ -283,14 +283,14 @@ def main():
     success = consolidator.consolidate()
     
     if success:
-        print("✅ Consolidação bem-sucedida!")
+        print("[SUCESSO] Consolidação bem-sucedida!")
         print()
         print("ARQUIVO GERADO:")
         print(f"   {output_json} ← MULHERES NA POLITICA")
         print()
         print()
     else:
-        print("❌ Erro na consolidação!")
+        print("[ERRO] Erro na consolidação!")
         print()
         print("VERIFIQUE:")
         print("   • Se os arquivos de entrada existem (principalmente vereadoras.json)")
@@ -382,7 +382,7 @@ if __name__ == "__main__":
 #         if stats_final['total_geral'] > 0:
 #             pct = round((stats_final['total_mulheres'] / stats_final['total_geral']) * 100, 2)
             
-#         print(f"   📊 ESTATÍSTICAS FINAIS:")
+#         print(f"   ESTATÍSTICAS FINAIS:")
 #         print(f"      • Mulheres: {stats_final['total_mulheres']}")
 #         print(f"      • Homens:   {stats_final['total_homens']}")
 #         print(f"      • Total:    {stats_final['total_geral']} ({pct}%)")

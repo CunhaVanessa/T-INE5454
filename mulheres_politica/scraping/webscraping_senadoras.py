@@ -117,7 +117,7 @@ def extract_senadoras_from_filtered_table(soup: BeautifulSoup, source_url: str, 
                             nome = nome_link.get_text().strip()
                             perfil_url = nome_link.get('href', '')
                             
-                            if perfil_url and not perfil_url.startswith('http'):
+                            if perfil_url and not perfil_url.startswith('http'): # type: ignore
                                 perfil_url = f"https://www25.senado.leg.br{perfil_url}"
                         else:
                             continue
@@ -148,7 +148,7 @@ def extract_senadoras_from_filtered_table(soup: BeautifulSoup, source_url: str, 
                         total_senadoras += 1
                     
                     except Exception as e:
-                        print(f"   ⚠ Erro ao processar linha: {e}")
+                        print(f"   [AVISO] Erro ao processar linha: {e}")
                         continue
             
             elif inside_masculino_section:
@@ -156,8 +156,14 @@ def extract_senadoras_from_filtered_table(soup: BeautifulSoup, source_url: str, 
                     total_homens += 1
 
     stats = {"total_homens": total_homens}
-    with open('data/temp_stats_senado.json', 'w') as f:
-        json.dump(stats, f)
+    try:
+        # Criar diretório se não existir
+        Path("../data").mkdir(parents=True, exist_ok=True)
+        with open('../data/temp_stats_senado.json', 'w') as f:
+            json.dump(stats, f)
+    except Exception as e:
+        print(f"   [AVISO] Não foi possível salvar estatísticas temporárias: {e}")
+    
     print(f"\n   Contagem finalizada: {len(senadoras)} Mulheres e {total_homens} Homens.")
          
     if senadoras:
@@ -277,7 +283,7 @@ def extract_profile_details(soup: BeautifulSoup, perfil_url: str) -> Dict:
         if mandatos_match:
             detalhes['numero_mandatos'] = mandatos_match.group(1)
         
-        comissoes_section = soup.find(text=re.compile(r'comissões?', re.IGNORECASE))
+        comissoes_section = soup.find(string=re.compile(r'comissões?', re.IGNORECASE))
         if comissoes_section:
             parent = comissoes_section.parent
             if parent:
@@ -303,7 +309,7 @@ def extract_profile_details(soup: BeautifulSoup, perfil_url: str) -> Dict:
     
     return detalhes
 
-def save_to_csv(senadoras_data: List[Dict], filename: str = "data/senadoras.csv") -> None:
+def save_to_csv(senadoras_data: List[Dict], filename: str = "../data/senadoras.csv") -> None:
     
     if not senadoras_data:
         print("   ✗ Nenhum dado para salvar\n")

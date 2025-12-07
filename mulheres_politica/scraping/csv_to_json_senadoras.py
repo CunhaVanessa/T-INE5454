@@ -1,5 +1,5 @@
 """
-Conversor CSV → JSON - Senadoras Federais
+Conversor CSV para JSON - Senadoras Federais
 
 Usa os dados JÁ EXTRAÍDOS e presentes nas colunas do CSV.
 """
@@ -227,23 +227,23 @@ class SenadorasCSVToJSONConverter:
 
 
 def main():
-    csv_input = 'data/senadoras.csv'
-    json_output = 'data/senadoras.json'
+    csv_input = '../data/senadoras.csv'
+    json_output = '../data/senadoras.json'
     
     print("\n")
     print("┌" + "─" * 68 + "┐")
-    print("│        CONVERSOR CSV → JSON - SENADORAS FEDERAIS                   │")
+    print("│        CONVERSOR CSV PARA JSON - SENADORAS FEDERAIS                │")
     print()
     
     converter = SenadorasCSVToJSONConverter(csv_input, json_output)
     success = converter.convert()
     
     if success:
-        print("✅ Conversão bem-sucedida!")
+        print("[SUCESSO] Conversão bem-sucedida!")
         print(f"📄 Arquivo JSON disponível em: {json_output}")
         print()
     else:
-        print("❌ Erro na conversão!")
+        print("[ERRO] Erro na conversão!")
         print()
         print("POSSÍVEIS CAUSAS:")
         print("  • Arquivo CSV não encontrado")
