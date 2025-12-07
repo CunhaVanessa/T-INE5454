@@ -217,6 +217,99 @@
             padding: 20px;
             text-align: center;
         }
+
+        /* CSS para Análises Dinâmicas */
+        .analysis-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .analysis-header {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            text-align: center;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        
+        .metric-card h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        
+        .metric-card .value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .metric-card .subtitle {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .mini-chart {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .mini-chart h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        
+        .chart-label {
+            min-width: 80px;
+            font-weight: 500;
+        }
+        
+        .chart-bar-fill {
+            height: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            margin: 0 8px;
+        }
+        
+        .chart-value {
+            font-weight: bold;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -227,10 +320,11 @@
         </header>
         
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('geral')">Visão Geral (Todas)</button>
-            <button class="tab-btn" onclick="switchTab('deputadas')">Deputadas Federais</button>
-            <button class="tab-btn" onclick="switchTab('senadoras')">Senadoras Federais</button>
-            <button class="tab-btn" onclick="switchTab('vereadoras')">Vereadoras Municipais</button>
+            <button class="tab-btn active" onclick="switchTab('geral')">Visão Geral</button>
+            <button class="tab-btn" onclick="switchTab('deputadas')">Deputadas</button>
+            <button class="tab-btn" onclick="switchTab('senadoras')">Senadoras</button>
+            <button class="tab-btn" onclick="switchTab('vereadoras')">Vereadoras</button>
+            <button class="tab-btn" onclick="window.open('/app_simulado/analises_consistencia.html', '_blank')">Análises</button>
         </div>
 
         <div class="content">
@@ -249,7 +343,8 @@
                 </div>
             </div>
             
-            <div class="data-section">
+            <!-- Seção de Dados (Tabelas) -->
+            <div class="data-section" id="data-section">
                 <h2 id="section-title">Visão Geral</h2>
                 
                 <div class="filter-section">
@@ -265,6 +360,46 @@
                     </select>
                     <button onclick="filterData()">Filtrar</button>
                     <button onclick="clearFilters()">Limpar</button>
+                </div>
+
+                <!-- Análises Dinâmicas -->
+                <div class="analysis-section">
+                    <h3 class="analysis-header">📊 Análises dos Dados Filtrados</h3>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <h4>Total de Registros</h4>
+                            <div class="value" id="metric-total">0</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Partidos Únicos</h4>
+                            <div class="value" id="metric-partidos">0</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Estados Representados</h4>
+                            <div class="value" id="metric-estados">0</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Completude Média</h4>
+                            <div class="value" id="metric-completude">0%</div>
+                            <div class="subtitle">Campos preenchidos</div>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-row">
+                        <div class="mini-chart">
+                            <h4>🏛️ Top 5 Partidos</h4>
+                            <div id="top-partidos"></div>
+                        </div>
+                        <div class="mini-chart">
+                            <h4>🗺️ Top 5 Estados</h4>
+                            <div id="top-estados"></div>
+                        </div>
+                        <div class="mini-chart" id="cargo-breakdown" style="display: none;">
+                            <h4>📊 Distribuição por Cargo</h4>
+                            <div id="cargo-distribution"></div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="table-container">
@@ -324,25 +459,26 @@
         
         const dataSources = {
             geral: {
-                url: 'data/mulheres_politica_consolidado.json',
+                url: '../data/mulheres_politica_consolidado.json',
                 rootKey: 'parlamentares',
                 title: 'Visão Geral Consolidada'
             },
             deputadas: {
-                url: 'data/deputadas.json',
+                url: '../data/deputadas.json',
                 rootKey: 'deputadas',
                 title: 'Deputadas Federais'
             },
             senadoras: {
-                url: 'data/senadoras.json',
+                url: '../data/senadoras.json',
                 rootKey: 'senadoras',
                 title: 'Senadoras da República'
             },
             vereadoras: {
-                url: 'data/vereadoras.json',
+                url: '../data/vereadoras.json',
                 rootKey: 'vereadoras',
                 title: 'Vereadoras (Eleições 2024)'
-            }
+            },
+
         };
 
         async function switchTab(category) {
@@ -356,11 +492,15 @@
             document.getElementById('section-title').textContent = dataSources[category].title;
             
             const cargoFilter = document.getElementById('cargo-filter');
+            const cargoBreakdown = document.getElementById('cargo-breakdown');
+            
             if (category === 'geral') {
                 cargoFilter.style.display = 'block';
+                cargoBreakdown.style.display = 'block';
             } else {
                 cargoFilter.style.display = 'none';
                 cargoFilter.value = ""; 
+                cargoBreakdown.style.display = 'none';
             }
 
             const tbody = document.getElementById('table-body');
@@ -403,7 +543,7 @@
                 updateStats();
                 
                 let msg = error.message;
-                if (category === 'vereadoras') msg += " (Verifique se o arquivo data/vereadoras.json existe)";
+                if (category === 'vereadoras') msg += " (Verifique se o arquivo ../data/vereadoras.json existe)";
                 
                 document.getElementById('table-body').innerHTML = `
                     <tr><td colspan="6" style="text-align:center; padding:30px; color: #666;">
@@ -429,6 +569,118 @@
                 vereadoras: "Total de Vereadoras"
             };
             document.getElementById('label-total').textContent = labels[currentCategory] || "Total";
+            
+            // Atualizar análises dinâmicas
+            updateDynamicAnalytics();
+        }
+        
+        function updateDynamicAnalytics() {
+            const data = currentData;
+            const total = data.length;
+            
+            // Calcular completude média
+            const sampleRecord = data[0] || {};
+            const attributes = Object.keys(sampleRecord);
+            let totalCompletude = 0;
+            
+            attributes.forEach(attr => {
+                const nonEmptyCount = data.filter(d => d[attr] && d[attr] !== 'N/A' && d[attr] !== '').length;
+                totalCompletude += (nonEmptyCount / total * 100);
+            });
+            
+            const avgCompletude = attributes.length > 0 ? (totalCompletude / attributes.length).toFixed(1) : 0;
+            
+            // Atualizar métricas
+            document.getElementById('metric-total').textContent = total.toLocaleString('pt-BR');
+            document.getElementById('metric-partidos').textContent = new Set(data.map(d => d.partido).filter(p => p && p !== 'null')).size;
+            document.getElementById('metric-estados').textContent = new Set(data.map(d => d.uf).filter(u => u && u.length === 2)).size;
+            document.getElementById('metric-completude').textContent = avgCompletude + '%';
+            
+            // Gráficos dinâmicos
+            updateTopPartidos(data);
+            updateTopEstados(data);
+            if (currentCategory === 'geral') {
+                updateCargoDistribution(data);
+            }
+        }
+        
+        function updateTopPartidos(data) {
+            const partidoCounts = {};
+            data.forEach(d => {
+                const partido = d.partido || 'N/A';
+                partidoCounts[partido] = (partidoCounts[partido] || 0) + 1;
+            });
+            
+            const top5 = Object.entries(partidoCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+                
+            const maxCount = top5[0]?.[1] || 1;
+            
+            const html = top5.map(([partido, count]) => {
+                const width = (count / maxCount * 100).toFixed(1);
+                return `
+                    <div class="chart-bar">
+                        <div class="chart-label">${partido}</div>
+                        <div class="chart-bar-fill" style="width: ${width}%"></div>
+                        <div class="chart-value">${count}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('top-partidos').innerHTML = html;
+        }
+        
+        function updateTopEstados(data) {
+            const estadoCounts = {};
+            data.forEach(d => {
+                const estado = d.uf || 'N/A';
+                estadoCounts[estado] = (estadoCounts[estado] || 0) + 1;
+            });
+            
+            const top5 = Object.entries(estadoCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+                
+            const maxCount = top5[0]?.[1] || 1;
+            
+            const html = top5.map(([estado, count]) => {
+                const width = (count / maxCount * 100).toFixed(1);
+                return `
+                    <div class="chart-bar">
+                        <div class="chart-label">${estado}</div>
+                        <div class="chart-bar-fill" style="width: ${width}%"></div>
+                        <div class="chart-value">${count}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('top-estados').innerHTML = html;
+        }
+        
+        function updateCargoDistribution(data) {
+            const cargoCounts = {};
+            data.forEach(d => {
+                const cargo = d.cargo || 'N/A';
+                cargoCounts[cargo] = (cargoCounts[cargo] || 0) + 1;
+            });
+            
+            const total = data.length;
+            const html = Object.entries(cargoCounts)
+                .sort(([,a], [,b]) => b - a)
+                .map(([cargo, count]) => {
+                    const percentage = (count / total * 100).toFixed(1);
+                    const cargoSimple = cargo.replace(' Federal', '').replace(' Municipal', '');
+                    return `
+                        <div class="chart-bar">
+                            <div class="chart-label">${cargoSimple}</div>
+                            <div class="chart-bar-fill" style="width: ${percentage}%"></div>
+                            <div class="chart-value">${count} (${percentage}%)</div>
+                        </div>
+                    `;
+                }).join('');
+            
+            document.getElementById('cargo-distribution').innerHTML = html;
         }
         
         function formatMandato(mandato) {
@@ -479,10 +731,13 @@
 
             // Cargos (Apenas se estiver na aba Geral)
             if (currentCategory === 'geral') {
-                const cargos = [...new Set(originalData.map(d => d.cargo).filter(c => c))].sort();
                 const cargoSelect = document.getElementById('cargo-filter');
-                cargoSelect.innerHTML = '<option value="">Todos os Cargos</option>';
-                cargos.forEach(c => cargoSelect.innerHTML += `<option value="${c}">${c}</option>`);
+                cargoSelect.innerHTML = `
+                    <option value="">Todos os Cargos</option>
+                    <option value="Deputada Federal">Deputada</option>
+                    <option value="Senadora Federal">Senadora</option>
+                    <option value="Vereadora Municipal">Vereadora</option>
+                `;
             }
         }
         
@@ -490,7 +745,7 @@
             const name = document.getElementById('filter-name').value.toLowerCase();
             const party = document.getElementById('filter-party').value;
             const nat = document.getElementById('naturalidade-filter').value;
-            const cargo = document.getElementById('cargo-filter').value; // Novo
+            const cargo = document.getElementById('cargo-filter').value;
             
             currentPage = 1;
             
@@ -499,8 +754,6 @@
                 const matchName = !name || n.includes(name);
                 const matchParty = !party || item.partido === party;
                 const matchNat = !nat || item.naturalidade === nat;
-                
-                // Filtro de cargo só aplica se tiver selecionado
                 const matchCargo = !cargo || item.cargo === cargo;
                 
                 return matchName && matchParty && matchNat && matchCargo;
@@ -602,6 +855,8 @@
         window.onclick = function(e) {
             if (e.target === document.getElementById('detail-modal')) closeModal();
         }
+        
+
         
         window.onload = () => {
              switchTab('geral');

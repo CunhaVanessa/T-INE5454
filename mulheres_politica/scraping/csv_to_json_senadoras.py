@@ -125,7 +125,7 @@ class SenadorasCSVToJSONConverter:
             
             total_homens = 0
             try:
-                with open('data/temp_stats_senado.json', 'r') as f:
+                with open('../data/temp_stats_senado.json', 'r') as f:
                     stats = json.load(f)
                     total_homens = stats.get('total_homens', 0)
             except:

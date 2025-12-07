@@ -128,7 +128,7 @@ O projeto inclui um dashboard web completo para visualização dos dados. Siga e
 python servidor_app.py
 ```
 
-Depois abra seu navegador e acesse: **http://localhost:8000**
+Depois abra seu navegador e acesse: **http://localhost:8080**
 
 #### Opção B: Abrir Arquivo HTML Diretamente
 ```bash
@@ -146,12 +146,37 @@ xdg-open app_simulado/app_demo.html
 
 ### 3. Funcionalidades do Dashboard
 
-- **Visão Geral:** Estatísticas gerais e gráficos de representatividade
-- **Filtros Interativos:** Por cargo, estado, partido, faixa etária
-- **Busca Avançada:** Pesquisar por nome específico
-- **Detalhes Individuais:** Modal com informações completas de cada parlamentar
-- **Gráficos Dinâmicos:** Distribuição por estado, partido e cargo
-- **Dados Atualizados:** Informações coletadas em dezembro de 2024
+#### Abas Principais:
+- **Visão Geral:** Estatísticas consolidadas de todas as parlamentares (10.870 registros)
+- **Deputadas:** Dados específicos das 276 deputadas federais
+- **Senadoras:** Informações das 15 senadoras em exercício  
+- **Vereadoras:** Cobertura completa das 10.579 vereadoras eleitas em 2024
+- **Análises:** 📊 **NOVA ABA** com análises estatísticas avançadas
+
+#### Recursos Interativos:
+- **Filtros Avançados:** Por cargo (Deputada/Senadora/Vereadora), estado, partido e naturalidade
+- **Busca Inteligente:** Pesquisa por nome com resultados em tempo real
+- **Detalhes Completos:** Modal com informações biográficas e de contato
+- **Paginação Otimizada:** Navegação eficiente pelos dados
+
+#### 📊 Nova Seção de Análises Estatísticas:
+- **Análise de Qualidade dos Dados:**
+  - Tipos de dados detectados (texto, número, data)
+  - Percentual de completude por campo
+  - Identificação de valores ausentes
+  - Detecção de inconsistências
+
+- **Gráficos de Distribuição:**
+  - Distribuição por cargo com percentuais
+  - Top 10 partidos políticos mais representados
+  - Top 10 estados com maior representatividade feminina
+  - Análise de atributos disponíveis
+
+- **Métricas de Qualidade:**
+  - Total de registros processados
+  - Número de atributos por registro
+  - Campos com 100% de completude
+  - Indicadores de integridade dos dados
 
 ### 4. Características Técnicas dos Scrapers
 

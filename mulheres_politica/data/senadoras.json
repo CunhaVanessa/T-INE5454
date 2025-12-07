@@ -3,12 +3,13 @@
     "fonte": "Senado Federal",
     "tipo": "Senadoras Federais",
     "total_registros": 15,
-    "data_processamento": "2025-12-07 13:39:58",
+    "data_processamento": "2025-12-07 16:09:39",
     "campos": [
       "nome",
       "nome_civil",
       "partido",
       "uf",
+      "cargo",
       "periodo_mandato",
       "telefones",
       "email",
@@ -29,6 +30,7 @@
       "nome_civil": 15,
       "partido": 15,
       "uf": 15,
+      "cargo": 15,
       "periodo_mandato": 15,
       "telefones": 15,
       "email": 15,
@@ -45,9 +47,9 @@
     },
     "estatisticas_genero": {
       "total_mulheres": 15,
-      "total_homens": 0,
-      "total_geral": 15,
-      "porcentagem_mulheres": 100.0
+      "total_homens": 66,
+      "total_geral": 81,
+      "porcentagem_mulheres": 18.52
     }
   },
   "senadoras": [
@@ -56,6 +58,7 @@
       "nome_civil": "Senadores",
       "partido": "PDT",
       "uf": "MA",
+      "cargo": "Senadora",
       "periodo_mandato": "2023 - 2031",
       "telefones": "(61) 3303-2967",
       "email": "sen.anapaulalobato@senado.leg.br",
@@ -68,13 +71,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/6358",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Augusta Brito",
       "nome_civil": "Senadores",
       "partido": "PT",
       "uf": "CE",
+      "cargo": "Senadora",
       "periodo_mandato": "2023 - 2031",
       "telefones": "(61) 3303-5940",
       "email": "sen.augustabrito@senado.leg.br",
@@ -87,13 +91,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/6350",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Damares Alves",
       "nome_civil": "Senadores",
       "partido": "REPUBLICANOS",
       "uf": "DF",
+      "cargo": "Senadora",
       "periodo_mandato": "2023 - 2031",
       "telefones": "(61) 3303-3265",
       "email": "sen.damaresalves@senado.leg.br",
@@ -106,13 +111,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/6335",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Daniella Ribeiro",
       "nome_civil": "Senadores",
       "partido": "PP",
       "uf": "PB",
+      "cargo": "Senadora",
       "periodo_mandato": "2019 - 2027",
       "telefones": "(61) 3303-6788 / 6790",
       "email": "sen.daniellaribeiro@senado.leg.br",
@@ -125,13 +131,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5998",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Dra. Eudócia",
       "nome_civil": "Senadores",
       "partido": "PL",
       "uf": "AL",
+      "cargo": "Senadora",
       "periodo_mandato": "2019 - 2027",
       "telefones": "(61) 3303-6083",
       "email": "sen.draeudocia@senado.leg.br",
@@ -144,13 +151,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5906",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Eliziane Gama",
       "nome_civil": "Senadores",
       "partido": "PSD",
       "uf": "MA",
+      "cargo": "Senadora",
       "periodo_mandato": "2019 - 2027",
       "telefones": "(61) 3303-6741",
       "email": "sen.elizianegama@senado.leg.br",
@@ -163,13 +171,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5718",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Ivete da Silveira",
       "nome_civil": "Senadores",
       "partido": "MDB",
       "uf": "SC",
+      "cargo": "Senadora",
       "periodo_mandato": "2019 - 2027",
       "telefones": "(61) 3303-2200",
       "email": "sen.ivetedasilveira@senado.leg.br",
@@ -182,13 +191,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/6010",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Jussara Lima",
       "nome_civil": "Senadores",
       "partido": "PSD",
       "uf": "PI",
+      "cargo": "Senadora",
       "periodo_mandato": "2023 - 2031",
       "telefones": "(61) 3303-5800",
       "email": "sen.jussaralima@senado.leg.br",
@@ -201,13 +211,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/6369",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Leila Barros",
       "nome_civil": "Senadores",
       "partido": "PDT",
       "uf": "DF",
+      "cargo": "Senadora",
       "periodo_mandato": "2019 - 2027",
       "telefones": "(61) 3303-6427",
       "email": "sen.leilabarros@senado.leg.br",
@@ -220,13 +231,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5979",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Mara Gabrilli",
       "nome_civil": "Senadores",
       "partido": "PSD",
       "uf": "SP",
+      "cargo": "Senadora",
       "periodo_mandato": "2019 - 2027",
       "telefones": "(61) 3303-2191",
       "email": "sen.maragabrilli@senado.leg.br",
@@ -239,13 +251,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5376",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Professora Dorinha Seabra",
       "nome_civil": "Senadores",
       "partido": "UNIÃO",
       "uf": "TO",
+      "cargo": "Senadora",
       "periodo_mandato": "2023 - 2031",
       "telefones": "(61) 3303-5990 / 5995 / 5900",
       "email": "sen.professoradorinhaseabra@senado.leg.br",
@@ -258,13 +271,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5386",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Soraya Thronicke",
       "nome_civil": "Senadores",
       "partido": "PODEMOS",
       "uf": "MS",
+      "cargo": "Senadora",
       "periodo_mandato": "2019 - 2027",
       "telefones": "(61) 3303-1775",
       "email": "sen.sorayathronicke@senado.leg.br",
@@ -277,13 +291,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5988",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Teresa Leitão",
       "nome_civil": "Senadores",
       "partido": "PT",
       "uf": "PE",
+      "cargo": "Senadora",
       "periodo_mandato": "2023 - 2031",
       "telefones": "(61) 3303-2423",
       "email": "sen.teresaleitao@senado.leg.br",
@@ -296,13 +311,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/6338",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Tereza Cristina",
       "nome_civil": "Senadores",
       "partido": "PP",
       "uf": "MS",
+      "cargo": "Senadora",
       "periodo_mandato": "2023 - 2031",
       "telefones": "(61) 3303-2431",
       "email": "sen.terezacristina@senado.leg.br",
@@ -315,13 +331,14 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5736",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     },
     {
       "nome": "Zenaide Maia",
       "nome_civil": "Senadores",
       "partido": "PSD",
       "uf": "RN",
+      "cargo": "Senadora",
       "periodo_mandato": "2019 - 2027",
       "telefones": "(61) 3303-2371 / 2372 / 2358",
       "email": "sen.zenaidemaia@senado.leg.br",
@@ -334,7 +351,7 @@
       "link_perfil": "https://www25.senado.leg.br/web/senadores/senador/-/perfil/5783",
       "fonte_dados": "Web Scraping HTML",
       "url_fonte": "https://www25.senado.leg.br/web/senadores/em-exercicio/-/e/por-sexo",
-      "data_extracao": "2025-12-07 13:37:12"
+      "data_extracao": "2025-12-07 16:08:31"
     }
   ]
 }

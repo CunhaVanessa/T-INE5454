@@ -605,7 +605,7 @@ def is_valid_deputada_data(deputada_data: Dict) -> bool:
 # PARTE 7: SALVAMENTO EM CSV
 # ==========================================
 
-def save_to_csv(deputadas_data: List[Dict], filename: str = "data/deputadas.csv") -> None:
+def save_to_csv(deputadas_data: List[Dict], filename: str = "../data/deputadas.csv") -> None:
     if not deputadas_data:
         print("   ✗ Nenhum dado para salvar\n")
         return
